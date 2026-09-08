@@ -97,11 +97,36 @@ import notebookutils
 import requests
 
 FABRIC_API = "https://api.fabric.microsoft.com/v1"
+_TOKEN = None
+
+
+def _get_token(retries=5):
+    """Acquire a Fabric token once and reuse it.
+
+    notebookutils.credentials.getToken intermittently returns HTTP 500
+    (INTERNAL_ERROR, Retriable:true), so this backs off and retries rather than
+    failing the run. Calling it per-request is both slow and fragile.
+    """
+    global _TOKEN
+    if _TOKEN:
+        return _TOKEN
+    last = None
+    for attempt in range(retries):
+        try:
+            _TOKEN = notebookutils.credentials.getToken(
+                "https://api.fabric.microsoft.com")
+            return _TOKEN
+        except Exception as exc:          # noqa: BLE001 - surface after retries
+            last = exc
+            wait = 2 ** attempt
+            print(f"  token attempt {attempt + 1}/{retries} failed, retrying in {wait}s")
+            time.sleep(wait)
+    raise RuntimeError(f"could not acquire a Fabric token after {retries} attempts: {last}")
 
 
 def _hdr():
     return {
-        "Authorization": f"Bearer {notebookutils.credentials.getToken('https://api.fabric.microsoft.com')}",
+        "Authorization": f"Bearer {_get_token()}",
         "Content-Type": "application/json",
     }
 
@@ -174,6 +199,9 @@ print(f"workspace {WS}")
 print(f"lakehouse {LH_NAME} {LH_ID}")
 print(f"eventhouse {KQL_DB} {KQL_URI}")
 print(f"mode      {'DRY RUN - nothing will be written' if DRY_RUN else 'APPLY'}")
+
+_get_token()
+print("token     acquired")
 
 
 # METADATA ********************
