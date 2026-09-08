@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "b703f7e1-0f13-58a1-8832-b3771d4b7ab4",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000560"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000567"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000574"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000581"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000588"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000595"
+      },
+      {
+        "sourceColumnName": "Category",
+        "targetPropertyId": "1000000000602"
+      },
+      {
+        "sourceColumnName": "Interpretation",
+        "targetPropertyId": "1000000000609"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_waterbody",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

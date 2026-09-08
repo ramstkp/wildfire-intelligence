@@ -1,0 +1,185 @@
+[
+  {
+    "uniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7",
+    "payload": {
+      "name": "Wildfire monitoring",
+      "type": "kqlQueries"
+    },
+    "type": "container-v1"
+  },
+  {
+    "uniqueIdentifier": "f7499757-74a4-4701-9c96-4812b8cfe07e",
+    "payload": {
+      "name": "Dispatch priority zones",
+      "runSettings": {
+        "isStopped": false,
+        "executionIntervalInSeconds": 300
+      },
+      "query": {
+        "queryString": "declare query_parameters(startTime:datetime, endTime:datetime);\nDispatchPriority(6h, 3.0, 30000.0)\n| where last_seen between (startTime .. endTime)\n| project last_seen, s2_cell, nearest_commune, nearest_dept, frp_total,\n          growth_pct, trend, pop_exposed, pop_downwind, communes_at_risk,\n          wind_speed_kmh, wind_direction_deg, priority_score, severity,\n          recommendation, unit_id, unit_dist_km, water_name, water_dist_km"
+      },
+      "eventhouseItem": {
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemType": "KustoDatabase"
+      },
+      "eventTimeSettings": {
+        "timeZone": "UTC",
+        "ingestionDelayInSeconds": 180,
+        "timeFieldName": "last_seen"
+      },
+      "queryParameters": [
+        {
+          "name": "startTime",
+          "type": "DURATION_START",
+          "value": "07/30/2026 00:00:00"
+        },
+        {
+          "name": "endTime",
+          "type": "DURATION_END",
+          "value": "07/31/2026 00:00:00"
+        }
+      ],
+      "metadata": {
+        "workspaceId": "6dfa57e6-d36c-4a15-a745-0a1a0bd3e9b1",
+        "measureName": "",
+        "querySetId": "",
+        "queryId": ""
+      },
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      }
+    },
+    "type": "kqlSource-v1"
+  },
+  {
+    "uniqueIdentifier": "ab1658e8-7002-488f-8b8c-c2f010209984",
+    "payload": {
+      "name": "Fire zone dispatch events",
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      },
+      "definition": {
+        "type": "Event",
+        "instance": "{\"templateId\": \"SourceEvent\", \"templateVersion\": \"1.2.4\", \"steps\": [{\"name\": \"SourceEventStep\", \"id\": \"e39a234c-77de-42c2-9b2e-111468b6ff8e\", \"rows\": [{\"name\": \"SourceSelector\", \"kind\": \"SourceReference\", \"arguments\": [{\"name\": \"entityId\", \"type\": \"string\", \"value\": \"f7499757-74a4-4701-9c96-4812b8cfe07e\"}]}]}]}"
+      }
+    },
+    "type": "timeSeriesView-v1"
+  },
+  {
+    "uniqueIdentifier": "95360013-353f-4653-91aa-ef243ae60f38",
+    "payload": {
+      "name": "Satellite fire detections",
+      "runSettings": {
+        "isStopped": false,
+        "executionIntervalInSeconds": 300
+      },
+      "query": {
+        "queryString": "declare query_parameters(startTime:datetime, endTime:datetime);\nsilver_fire_detections\n| where acq_datetime between (startTime .. endTime)\n| project acq_datetime, detection_id, latitude, longitude, frp, brightness,\n          confidence, satellite, sensor_class, s2_cell"
+      },
+      "eventhouseItem": {
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemType": "KustoDatabase"
+      },
+      "eventTimeSettings": {
+        "timeZone": "UTC",
+        "ingestionDelayInSeconds": 180,
+        "timeFieldName": "acq_datetime"
+      },
+      "queryParameters": [
+        {
+          "name": "startTime",
+          "type": "DURATION_START",
+          "value": "07/30/2026 00:00:00"
+        },
+        {
+          "name": "endTime",
+          "type": "DURATION_END",
+          "value": "07/31/2026 00:00:00"
+        }
+      ],
+      "metadata": {
+        "workspaceId": "6dfa57e6-d36c-4a15-a745-0a1a0bd3e9b1",
+        "measureName": "",
+        "querySetId": "",
+        "queryId": ""
+      },
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      }
+    },
+    "type": "kqlSource-v1"
+  },
+  {
+    "uniqueIdentifier": "6d34388a-85a5-45c8-8914-e4f7444eeb95",
+    "payload": {
+      "name": "Raw detection events",
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      },
+      "definition": {
+        "type": "Event",
+        "instance": "{\"templateId\": \"SourceEvent\", \"templateVersion\": \"1.2.4\", \"steps\": [{\"name\": \"SourceEventStep\", \"id\": \"70cd08a4-1aa1-44b7-92d5-c8104921cddc\", \"rows\": [{\"name\": \"SourceSelector\", \"kind\": \"SourceReference\", \"arguments\": [{\"name\": \"entityId\", \"type\": \"string\", \"value\": \"95360013-353f-4653-91aa-ef243ae60f38\"}]}]}]}"
+      }
+    },
+    "type": "timeSeriesView-v1"
+  },
+  {
+    "uniqueIdentifier": "8e9eb97e-e89a-4978-bebd-30a6f98bac9d",
+    "payload": {
+      "name": "Critical fire threatening population",
+      "description": "Fires scored CRITICAL by DispatchPriority, with population downwind.",
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      },
+      "definition": {
+        "type": "Rule",
+        "instance": "{\"templateId\":\"EventTrigger\",\"templateVersion\":\"1.2.4\",\"steps\":[{\"name\":\"FieldsDefaultsStep\",\"id\":\"33289129-fdcb-4188-af6c-e9391edadbdb\",\"rows\":[{\"name\":\"EventSelector\",\"kind\":\"Event\",\"arguments\":[{\"kind\":\"EventReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"entityId\",\"type\":\"string\",\"value\":\"ab1658e8-7002-488f-8b8c-c2f010209984\"}],\"name\":\"event\"}]}]},{\"name\":\"EventDetectStep\",\"id\":\"41108eca-33d1-4d21-8f11-313b04842f48\",\"rows\":[{\"name\":\"EventFieldSelector\",\"kind\":\"EventField\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"severity\"}]},{\"name\":\"TextValueCondition\",\"kind\":\"TextValueCondition\",\"arguments\":[{\"name\":\"op\",\"type\":\"string\",\"value\":\"IsEqualTo\"},{\"name\":\"value\",\"type\":\"string\",\"value\":\"CRITICAL\"}]}]},{\"name\":\"ActStep\",\"id\":\"1dbdd644-c91b-4d0c-a23a-666b63ce00cb\",\"rows\":[{\"name\":\"TeamsBinding\",\"kind\":\"TeamsMessage\",\"arguments\":[{\"name\":\"messageLocale\",\"type\":\"string\",\"value\":\"\"},{\"name\":\"recipients\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"admin@MngEnvMCAP621458.onmicrosoft.com\"}]},{\"name\":\"headline\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"CRITICAL wildfire near \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"nearest_commune\"}]}]},{\"name\":\"optionalMessage\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"Commune: \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"nearest_commune\"}]},{\"type\":\"string\",\"value\":\" (dept \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"nearest_dept\"}]},{\"type\":\"string\",\"value\":\"). FRP \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"frp_total\"}]},{\"type\":\"string\",\"value\":\" MW. Population exposed \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"pop_exposed\"}]},{\"type\":\"string\",\"value\":\", downwind \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"pop_downwind\"}]},{\"type\":\"string\",\"value\":\". Wind \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"wind_speed_kmh\"}]},{\"type\":\"string\",\"value\":\" km/h from \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"wind_direction_deg\"}]},{\"type\":\"string\",\"value\":\" deg. Trend \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"trend\"}]},{\"type\":\"string\",\"value\":\". ACTION: \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"recommendation\"}]}]},{\"name\":\"additionalInformation\",\"type\":\"array\",\"values\":[]}]}]}]}",
+        "settings": {
+          "shouldRun": true,
+          "shouldApplyRuleOnUpdate": false
+        }
+      }
+    },
+    "type": "timeSeriesView-v1"
+  },
+  {
+    "uniqueIdentifier": "636d73cd-624b-4577-aa82-2d9beaaa6ead",
+    "payload": {
+      "name": "Fire growing rapidly",
+      "description": "Geostationary frames show the fire accelerating past 40 percent growth.",
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      },
+      "definition": {
+        "type": "Rule",
+        "instance": "{\"templateId\":\"EventTrigger\",\"templateVersion\":\"1.2.4\",\"steps\":[{\"name\":\"FieldsDefaultsStep\",\"id\":\"c3ca4c8b-0b4d-4ea7-a66a-fb180f55405e\",\"rows\":[{\"name\":\"EventSelector\",\"kind\":\"Event\",\"arguments\":[{\"kind\":\"EventReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"entityId\",\"type\":\"string\",\"value\":\"ab1658e8-7002-488f-8b8c-c2f010209984\"}],\"name\":\"event\"}]}]},{\"name\":\"EventDetectStep\",\"id\":\"2a75abce-70da-4459-a417-bd636a3a0cbb\",\"rows\":[{\"name\":\"EventFieldSelector\",\"kind\":\"EventField\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"growth_pct\"}]},{\"name\":\"NumberValueCondition\",\"kind\":\"NumberValueCondition\",\"arguments\":[{\"name\":\"op\",\"type\":\"string\",\"value\":\"IsGreaterThan\"},{\"name\":\"threshold\",\"type\":\"number\",\"value\":40.0}]}]},{\"name\":\"ActStep\",\"id\":\"743e15d9-c77d-4226-8f0b-a0b6d79890f5\",\"rows\":[{\"name\":\"TeamsBinding\",\"kind\":\"TeamsMessage\",\"arguments\":[{\"name\":\"messageLocale\",\"type\":\"string\",\"value\":\"\"},{\"name\":\"recipients\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"admin@MngEnvMCAP621458.onmicrosoft.com\"}]},{\"name\":\"headline\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"Fire GROWING near \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"nearest_commune\"}]}]},{\"name\":\"optionalMessage\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"Growth \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"growth_pct\"}]},{\"type\":\"string\",\"value\":\" percent across geostationary frames. FRP now \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"frp_total\"}]},{\"type\":\"string\",\"value\":\" MW. Wind \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"wind_speed_kmh\"}]},{\"type\":\"string\",\"value\":\" km/h. Nearest unit \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"unit_id\"}]},{\"type\":\"string\",\"value\":\" at \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"unit_dist_km\"}]},{\"type\":\"string\",\"value\":\" km.\"}]},{\"name\":\"additionalInformation\",\"type\":\"array\",\"values\":[]}]}]}]}",
+        "settings": {
+          "shouldRun": true,
+          "shouldApplyRuleOnUpdate": false
+        }
+      }
+    },
+    "type": "timeSeriesView-v1"
+  },
+  {
+    "uniqueIdentifier": "09485fe8-63ed-455f-9e81-5cd6ff5fbe5f",
+    "payload": {
+      "name": "High intensity detection",
+      "description": "Any single satellite detection above 50 MW fire radiative power.",
+      "parentContainer": {
+        "targetUniqueIdentifier": "126484fd-728b-42c9-a83b-2780e5c2b0f7"
+      },
+      "definition": {
+        "type": "Rule",
+        "instance": "{\"templateId\":\"EventTrigger\",\"templateVersion\":\"1.2.4\",\"steps\":[{\"name\":\"FieldsDefaultsStep\",\"id\":\"bfad07bb-16c0-436b-bec3-0fbd1ae70edd\",\"rows\":[{\"name\":\"EventSelector\",\"kind\":\"Event\",\"arguments\":[{\"kind\":\"EventReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"entityId\",\"type\":\"string\",\"value\":\"6d34388a-85a5-45c8-8914-e4f7444eeb95\"}],\"name\":\"event\"}]}]},{\"name\":\"EventDetectStep\",\"id\":\"2571fd65-aa1e-4631-9f38-40c7619cfb9f\",\"rows\":[{\"name\":\"EventFieldSelector\",\"kind\":\"EventField\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"frp\"}]},{\"name\":\"NumberValueCondition\",\"kind\":\"NumberValueCondition\",\"arguments\":[{\"name\":\"op\",\"type\":\"string\",\"value\":\"IsGreaterThan\"},{\"name\":\"threshold\",\"type\":\"number\",\"value\":50.0}]}]},{\"name\":\"ActStep\",\"id\":\"219dcf2c-3bf3-41b4-8e3e-8b52906cd39f\",\"rows\":[{\"name\":\"TeamsBinding\",\"kind\":\"TeamsMessage\",\"arguments\":[{\"name\":\"messageLocale\",\"type\":\"string\",\"value\":\"\"},{\"name\":\"recipients\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"admin@MngEnvMCAP621458.onmicrosoft.com\"}]},{\"name\":\"headline\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"High intensity hotspot detected\"}]},{\"name\":\"optionalMessage\",\"type\":\"array\",\"values\":[{\"type\":\"string\",\"value\":\"FRP \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"frp\"}]},{\"type\":\"string\",\"value\":\" MW at \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"latitude\"}]},{\"type\":\"string\",\"value\":\", \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"longitude\"}]},{\"type\":\"string\",\"value\":\". Satellite \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"satellite\"}]},{\"type\":\"string\",\"value\":\" (\"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"sensor_class\"}]},{\"type\":\"string\",\"value\":\"), confidence \"},{\"kind\":\"EventFieldReference\",\"type\":\"complex\",\"arguments\":[{\"name\":\"fieldName\",\"type\":\"string\",\"value\":\"confidence\"}]},{\"type\":\"string\",\"value\":\".\"}]},{\"name\":\"additionalInformation\",\"type\":\"array\",\"values\":[]}]}]}]}",
+        "settings": {
+          "shouldRun": true,
+          "shouldApplyRuleOnUpdate": false
+        }
+      }
+    },
+    "type": "timeSeriesView-v1"
+  }
+]

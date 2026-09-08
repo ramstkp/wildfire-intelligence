@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Ontology",
+    "displayName": "ONT_Wildfire_Impact",
+    "description": "Wildfire impact ontology over LH_WildFires. Sources are the curated graph tables built from EH_Wildfire via OneLake mirroring and shortcuts. Relationships describe observed proximity, not verified impact or dispatch."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "569658b4-f93a-a274-4c55-a682912a8ef3"
+  }
+}

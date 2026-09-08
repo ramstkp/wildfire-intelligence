@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "07_graph_wildfire_snapshot",
+    "description": "Deduplicated, time-aligned graph snapshots; explicit historical and proximity labels"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "019f37ea-b938-9814-4d0b-ec6556dd08dc"
+  }
+}

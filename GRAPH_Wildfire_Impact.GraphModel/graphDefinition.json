@@ -1,0 +1,619 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/graphIndex/definition/graphDefinition/1.0.0/schema.json",
+  "nodeTables": [
+    {
+      "nodeTypeAlias": "FireZoneNode",
+      "id": "FireZoneMapping",
+      "dataSourceName": "node_firezone",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "LastSeen",
+          "sourceColumn": "LastSeen"
+        },
+        {
+          "propertyName": "PeakDetectionMW",
+          "sourceColumn": "PeakDetectionMW"
+        },
+        {
+          "propertyName": "LatestFrameMW",
+          "sourceColumn": "LatestFrameMW"
+        },
+        {
+          "propertyName": "DetectionCount",
+          "sourceColumn": "DetectionCount"
+        },
+        {
+          "propertyName": "ObservationStatus",
+          "sourceColumn": "ObservationStatus"
+        },
+        {
+          "propertyName": "GrowthPct",
+          "sourceColumn": "GrowthPct"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "DetectionNode",
+      "id": "DetectionMapping",
+      "dataSourceName": "node_detection",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "ObservedAt",
+          "sourceColumn": "ObservedAt"
+        },
+        {
+          "propertyName": "Satellite",
+          "sourceColumn": "Satellite"
+        },
+        {
+          "propertyName": "SensorTier",
+          "sourceColumn": "SensorTier"
+        },
+        {
+          "propertyName": "FrpMW",
+          "sourceColumn": "FrpMW"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "CommuneNode",
+      "id": "CommuneMapping",
+      "dataSourceName": "node_commune",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "Population",
+          "sourceColumn": "Population"
+        },
+        {
+          "propertyName": "Department",
+          "sourceColumn": "Department"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "CriticalInfrastructureNode",
+      "id": "CriticalInfrastructureMapping",
+      "dataSourceName": "node_criticalinfrastructure",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "Category",
+          "sourceColumn": "Category"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "FireStationNode",
+      "id": "FireStationMapping",
+      "dataSourceName": "node_firestation",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "Category",
+          "sourceColumn": "Category"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "WaterBodyNode",
+      "id": "WaterBodyMapping",
+      "dataSourceName": "node_waterbody",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "Category",
+          "sourceColumn": "Category"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "WeatherNode",
+      "id": "WeatherMapping",
+      "dataSourceName": "node_weather",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "ObservedAt",
+          "sourceColumn": "ObservedAt"
+        },
+        {
+          "propertyName": "WindFromDeg",
+          "sourceColumn": "WindFromDeg"
+        },
+        {
+          "propertyName": "WindToDeg",
+          "sourceColumn": "WindToDeg"
+        },
+        {
+          "propertyName": "WindKmh",
+          "sourceColumn": "WindKmh"
+        },
+        {
+          "propertyName": "HumidityPct",
+          "sourceColumn": "HumidityPct"
+        }
+      ]
+    },
+    {
+      "nodeTypeAlias": "AircraftNode",
+      "id": "AircraftMapping",
+      "dataSourceName": "node_aircraft",
+      "propertyMappings": [
+        {
+          "propertyName": "Id",
+          "sourceColumn": "Id"
+        },
+        {
+          "propertyName": "Name",
+          "sourceColumn": "Name"
+        },
+        {
+          "propertyName": "Latitude",
+          "sourceColumn": "Latitude"
+        },
+        {
+          "propertyName": "Longitude",
+          "sourceColumn": "Longitude"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        },
+        {
+          "propertyName": "ObservedAt",
+          "sourceColumn": "ObservedAt"
+        },
+        {
+          "propertyName": "Role",
+          "sourceColumn": "Role"
+        },
+        {
+          "propertyName": "InferredFirefighting",
+          "sourceColumn": "InferredFirefighting"
+        },
+        {
+          "propertyName": "HeadingDeg",
+          "sourceColumn": "HeadingDeg"
+        },
+        {
+          "propertyName": "AltitudeM",
+          "sourceColumn": "AltitudeM"
+        },
+        {
+          "propertyName": "Interpretation",
+          "sourceColumn": "Interpretation"
+        }
+      ]
+    }
+  ],
+  "edgeTables": [
+    {
+      "edgeTypeAlias": "ObservedInEdge",
+      "id": "ObservedInMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_observedin",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "NearCommuneEdge",
+      "id": "NearCommuneMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_nearcommune",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "DownwindScreenEdge",
+      "id": "DownwindScreenMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_downwindscreen",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "NearInfrastructureEdge",
+      "id": "NearInfrastructureMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_nearinfrastructure",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "WeatherContextEdge",
+      "id": "WeatherContextMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_weathercontext",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "NearbyAircraftEdge",
+      "id": "NearbyAircraftMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_nearbyaircraft",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "StationOptionEdge",
+      "id": "StationOptionMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_stationoption",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    },
+    {
+      "edgeTypeAlias": "ScoopOptionEdge",
+      "id": "ScoopOptionMapping",
+      "edgeIdMapping": null,
+      "dataSourceName": "edge_scoopoption",
+      "sourceNodeKeyColumns": [
+        "SourceId"
+      ],
+      "propertyMappings": [
+        {
+          "propertyName": "DistanceKm",
+          "sourceColumn": "DistanceKm"
+        },
+        {
+          "propertyName": "Basis",
+          "sourceColumn": "Basis"
+        },
+        {
+          "propertyName": "SnapshotTime",
+          "sourceColumn": "SnapshotTime"
+        },
+        {
+          "propertyName": "Mode",
+          "sourceColumn": "Mode"
+        }
+      ],
+      "destinationNodeKeyColumns": [
+        "TargetId"
+      ]
+    }
+  ]
+}

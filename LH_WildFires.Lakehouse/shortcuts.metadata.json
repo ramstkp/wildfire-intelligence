@@ -1,0 +1,158 @@
+[
+  {
+    "name": "silver_weather",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/silver_weather",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "silver_fire_detections",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/silver_fire_detections",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "silver_aircraft",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/silver_aircraft",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_water_bodies",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_water_bodies",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_ground_units",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_ground_units",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_gdacs_alerts",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_gdacs_alerts",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_fire_stations",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_fire_stations",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_critical_infra",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_critical_infra",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "ref_communes",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ref_communes",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "bronze_weather_raw",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bronze_weather_raw",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "bronze_fire_raw",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bronze_fire_raw",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  },
+  {
+    "name": "bronze_aircraft_raw",
+    "path": "/Tables/rt_fires",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bronze_aircraft_raw",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "KustoDatabase"
+      }
+    }
+  }
+]

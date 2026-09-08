@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "03_ingest_fire_weather",
+    "description": "Open-Meteo surface + upper-air wind, air quality, and computed Canadian FWI -> Eventstream"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c1536d7b-d7a9-897e-4c75-a0a4afaf7ad9"
+  }
+}

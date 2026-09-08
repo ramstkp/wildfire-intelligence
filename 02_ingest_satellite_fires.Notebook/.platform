@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "02_ingest_satellite_fires",
+    "description": "NASA FIRMS multi-sensor fire detections (geostationary 10-min + polar 375m) -> Eventstream"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "cc432db6-bb3b-a112-475c-d8bf88780e34"
+  }
+}

@@ -1,0 +1,822 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/dataAgent/definition/dataSource/1.0.0/schema.json",
+  "artifactId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
+  "dataSourceInstructions": "This datasource is a lakehouse (SQL).  It holds **static /\nsnapshot** rows for entities -- ids, dimension attributes, and the\nforeign keys needed to join across entities.\n\nThe block below is the slice of the ontology bound to this\nlakehouse: entity -> physical table mapping, non-obvious column\naliases, identifier / display-name designations, and relationships\nrendered as ``<table>.<fk_col> = <other_table>.<pk_col>`` join\nexpressions that drop straight into a SQL ``JOIN ... ON`` clause.\nProperties listed bare (no ``= phys_col``) use a column whose name\nis the snake_case form of the property name.  Lines tagged\n``eventhouse-only TS (<table>): ...`` name metric columns that live\nin an eventhouse, not here -- do not SELECT or invent them.\n\n--- BEGIN LAKEHOUSE ONTOLOGY SLICE ---\nOntology: ONT_Wildfire_Impact\n\n== ENTITIES ==\n\nAircraft  (table=node_aircraft, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, ObservedAt=ObservedAt, Role, InferredFirefighting=InferredFirefighting, HeadingDeg=HeadingDeg, AltitudeM=AltitudeM, Interpretation\n\nCommune  (table=node_commune, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, Population, Department, Interpretation\n\nCriticalInfrastructure  (table=node_criticalinfrastructure, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, Category, Interpretation\n\nDetection  (table=node_detection, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, ObservedAt=ObservedAt, Satellite, SensorTier=SensorTier, FrpMW=FrpMW\n\nFireStation  (table=node_firestation, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, Category, Interpretation\n\nFireZone  (table=node_firezone, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, LastSeen=LastSeen, PeakDetectionMW=PeakDetectionMW, LatestFrameMW=LatestFrameMW, DetectionCount=DetectionCount, ObservationStatus=ObservationStatus, GrowthPct=GrowthPct, Interpretation\n\nWaterBody  (table=node_waterbody, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, Category, Interpretation\n\nWeather  (table=node_weather, id=Id, disp=Name)\n  props: Id, Name, Latitude, Longitude, SnapshotTime=SnapshotTime, Mode, ObservedAt=ObservedAt, WindFromDeg=WindFromDeg, WindToDeg=WindToDeg, WindKmh=WindKmh, HumidityPct=HumidityPct\n\n== RELATIONSHIPS ==\n(format: RelName: fk_table.fk_col = pk_table.pk_col)\ndownwindScreen: edge_downwindscreen.SourceId = node_firezone.Id AND edge_downwindscreen.TargetId = node_commune.Id\nnearCommune: edge_nearcommune.SourceId = node_firezone.Id AND edge_nearcommune.TargetId = node_commune.Id\nnearInfrastructure: edge_nearinfrastructure.SourceId = node_firezone.Id AND edge_nearinfrastructure.TargetId = node_criticalinfrastructure.Id\nnearbyAircraft: edge_nearbyaircraft.SourceId = node_aircraft.Id AND edge_nearbyaircraft.TargetId = node_firezone.Id\nobservedIn: edge_observedin.SourceId = node_detection.Id AND edge_observedin.TargetId = node_firezone.Id\nscoopOption: edge_scoopoption.SourceId = node_firezone.Id AND edge_scoopoption.TargetId = node_waterbody.Id\nstationOption: edge_stationoption.SourceId = node_firezone.Id AND edge_stationoption.TargetId = node_firestation.Id\nweatherContext: edge_weathercontext.SourceId = node_firezone.Id AND edge_weathercontext.TargetId = node_weather.Id\n--- END LAKEHOUSE ONTOLOGY SLICE ---\n",
+  "displayName": "LH_WildFires",
+  "type": "lakehouse_tables",
+  "userDescription": null,
+  "metadata": {},
+  "elements": [
+    {
+      "id": "c4d8d0b7-ef7a-46c7-b6a0-59aa754e5996",
+      "is_selected": false,
+      "display_name": "Schemas",
+      "type": "schema_grouping",
+      "description": null,
+      "children": [
+        {
+          "id": "3a46399c-2c3f-412d-8ed5-ffa52c6b0c6a",
+          "is_selected": false,
+          "display_name": "graph_wildfires",
+          "type": "lakehouse_tables.schema",
+          "description": null,
+          "children": [
+            {
+              "id": "331d87f9-ee5a-4cb9-8a2d-8917248f624f",
+              "is_selected": false,
+              "display_name": "Tables",
+              "type": "table_grouping",
+              "description": null,
+              "children": [
+                {
+                  "id": "a7eced6d-17d1-4f52-a3fd-cb8f0833a092",
+                  "is_selected": true,
+                  "display_name": "node_aircraft",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "60b1c389-f4ff-4166-bfca-35ea2322926f",
+                      "is_selected": true,
+                      "display_name": "AltitudeM",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "c98cd815-e639-4b1c-912f-9794cb9e8887",
+                      "is_selected": true,
+                      "display_name": "HeadingDeg",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "c3b06705-0190-4d63-a239-f2ba36960746",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "9c87cc08-dc8b-46f3-97df-2d83f154a629",
+                      "is_selected": true,
+                      "display_name": "InferredFirefighting",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "2b607f84-51ef-4143-8067-6593235ca5eb",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "14dae2d5-eb71-4a70-bfb3-e307de2551df",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "5c680475-a99e-414c-bd03-a2fe0de95510",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "81e0abf9-88a5-43b8-bbca-6717dcd7f2d8",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "9657fbf1-a9c0-4053-b963-8346ef62f996",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "5ceb5de0-f78a-4c50-add0-78063385e363",
+                      "is_selected": true,
+                      "display_name": "ObservedAt",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "5918682c-9187-44b5-9992-d916f9fbb8f3",
+                      "is_selected": true,
+                      "display_name": "Role",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "29ee52d4-1cc0-4907-9096-a64903a77908",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "d0191188-f32e-4d01-b589-4a7f331f0408",
+                  "is_selected": true,
+                  "display_name": "node_commune",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "e589b744-9e30-4fe2-94a7-bca60c16a678",
+                      "is_selected": true,
+                      "display_name": "Department",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "c300b6bf-3b50-4d41-be09-6cc22833b55d",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "9fe45ea0-8aa7-47d5-bfd2-a33835863538",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "82b3294b-19a2-4799-8794-68e9688df3dc",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "303bc69c-f3eb-4548-9d13-7a420fc47f58",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "a6b8d2ff-87dd-4067-8e81-2df041dc588e",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "382d8149-a363-4354-ac7b-ed6c283d19d3",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "e508a996-3880-4430-828b-c906686a1029",
+                      "is_selected": true,
+                      "display_name": "Population",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "bigint",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "071619f6-9de0-47cc-adfd-e76a04546ecc",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "f9cbceba-544e-4c6c-b307-afd70e7e2f7f",
+                  "is_selected": true,
+                  "display_name": "node_criticalinfrastructure",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "9aeec682-5586-4d8d-96d1-c12cd8c8dc52",
+                      "is_selected": true,
+                      "display_name": "Category",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "828405f3-d2e6-439e-a5b1-345f93c6a256",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "74553c74-ca10-40a3-85f3-5eef799dee37",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "f85ef92e-6b88-4e81-a8cc-1221f4c859a7",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "812045d8-3c13-45a6-bb71-372188c8d280",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "3cfb76c9-a7d1-4e3b-86b0-e6a5268b3f96",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "5612d85d-b091-4fb8-97a9-cf1b502e5c6c",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "c0485764-d6cc-4e66-84a3-0469575b2fa9",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "6366aae3-8469-4e81-8fdf-39f0eeef54fe",
+                  "is_selected": true,
+                  "display_name": "node_detection",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "26111755-7076-4651-8050-02fabb93dd15",
+                      "is_selected": true,
+                      "display_name": "FrpMW",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "09fe8e6e-dfb5-4973-a0b7-f4e2ef1991ed",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "a33c1051-c1cc-4207-8801-8f1f99305f11",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "89026715-2c4d-4159-9ad0-5133e6775f4a",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "6c1002c8-812a-433a-9f6a-62feb44f21a7",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "c3635355-95ee-47b0-9f12-55845e567e3f",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "e01cde53-c3d6-47f5-b6fa-bfa42316cee2",
+                      "is_selected": true,
+                      "display_name": "ObservedAt",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "850d62be-0c34-41ae-98ac-c6ec4a63bdd7",
+                      "is_selected": true,
+                      "display_name": "Satellite",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "ed724a8a-7398-43e1-87bf-c5f9b67b3eb6",
+                      "is_selected": true,
+                      "display_name": "SensorTier",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "aea164ee-452b-4cef-a6df-0235122bcbed",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "74e5048f-066a-4a24-8f9f-bcc4b794608d",
+                  "is_selected": true,
+                  "display_name": "node_firestation",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "b612891c-e746-47f1-a6e4-2604db0ac735",
+                      "is_selected": true,
+                      "display_name": "Category",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "a8689abb-2cc1-4b39-b81d-fe5addfea020",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "8359f932-1032-4ca0-9a01-9975b7da86e3",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "653e7240-f7d1-40b1-a88e-a6732e3f99d4",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "d5554ba5-3e89-4306-b4e1-9cd5466a4216",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "bbcb5c1d-279f-40c3-8d43-5f01f257b01c",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "1a53c46b-221f-4c94-985f-8b020767b238",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "0648995d-deec-4723-89d8-dd820098040e",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "54ac9dad-f438-4050-b10c-87094c55c4db",
+                  "is_selected": true,
+                  "display_name": "node_firezone",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "39ccee84-09f8-4262-b73a-2ee84809f791",
+                      "is_selected": true,
+                      "display_name": "DetectionCount",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "bigint",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "6566b082-bfa3-4dc1-aa6e-fbc16b1652b3",
+                      "is_selected": true,
+                      "display_name": "GrowthPct",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "056627a9-6ee1-425a-a2b7-9dc21e0fa9dc",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "a7d92765-a9f7-49e4-be10-f1954cc45d80",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "970cfbde-8ca5-4211-bb57-e8db5a870333",
+                      "is_selected": true,
+                      "display_name": "LastSeen",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "3e802628-d40e-407d-a491-f1180081280e",
+                      "is_selected": true,
+                      "display_name": "LatestFrameMW",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "efc24cc6-3ffa-415b-a5f9-6a09b067ec53",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "abe60a30-37d4-49c6-8e7a-be2c2a916658",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "67c6648f-cdbb-4d79-850a-bb2da2de1653",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "a8afd663-1e48-4fda-8cfa-8b103a405e74",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "92ee2349-a979-46f5-99be-c378ed8cbf46",
+                      "is_selected": true,
+                      "display_name": "ObservationStatus",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "e80e4056-3497-44b2-89e4-6b66cb257544",
+                      "is_selected": true,
+                      "display_name": "PeakDetectionMW",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "6f782313-d6a3-4adf-b860-a3450a1b8b73",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "246d30f2-e4ef-4d0f-b04b-d981bb62957e",
+                  "is_selected": true,
+                  "display_name": "node_waterbody",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "965cf363-fb0c-4e21-a9a4-fca9c8a9a16d",
+                      "is_selected": true,
+                      "display_name": "Category",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "8d9d29ef-d3a0-4842-b039-0396b84a4b9e",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "41182f89-6d59-44a1-ae66-9da50300ce81",
+                      "is_selected": true,
+                      "display_name": "Interpretation",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "2b98239e-257c-4327-b51e-dfe58dc3a3b7",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "cbfe6bf2-570e-452d-9a22-9dbf3f4f8cd9",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "3b57f398-b1b7-45bc-b0bb-98b7f1eb1439",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "f9aeb996-009b-406e-9348-89e3527382d5",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "669135fa-7ddd-4393-b71c-9cc383d34d02",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "585e9561-5015-41a8-8a1f-a57203f24557",
+                  "is_selected": true,
+                  "display_name": "node_weather",
+                  "type": "lakehouse_tables.table",
+                  "description": null,
+                  "children": [
+                    {
+                      "id": "8813ee3d-a67c-4bd3-bda3-827666b14973",
+                      "is_selected": true,
+                      "display_name": "HumidityPct",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "190cd288-a462-440c-ba3e-c1b37917444b",
+                      "is_selected": true,
+                      "display_name": "Id",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "b578bab3-8e02-4600-b7ab-c75b93cbbdff",
+                      "is_selected": true,
+                      "display_name": "Latitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "f840f305-a0bc-4d24-8839-354ccbefe217",
+                      "is_selected": true,
+                      "display_name": "Longitude",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "274f5411-6fb5-4a7b-b098-d6b5e68e89dc",
+                      "is_selected": true,
+                      "display_name": "Mode",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "9f2c6c0e-efe2-4a2f-8f80-801927bd4a29",
+                      "is_selected": true,
+                      "display_name": "Name",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "cd4f0a43-35ee-4152-9adc-511911eff4a4",
+                      "is_selected": true,
+                      "display_name": "ObservedAt",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "3d23cfa1-3678-4f15-b984-bdcc0df3c3e0",
+                      "is_selected": true,
+                      "display_name": "SnapshotTime",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "varchar",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "78bced79-8609-4752-9e3a-842b5a78ee00",
+                      "is_selected": true,
+                      "display_name": "WindFromDeg",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "ac27b980-e821-4691-a2ba-2c145d7a68ad",
+                      "is_selected": true,
+                      "display_name": "WindKmh",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    },
+                    {
+                      "id": "86280b01-b909-4033-b379-af31fb61befb",
+                      "is_selected": true,
+                      "display_name": "WindToDeg",
+                      "type": "lakehouse_tables.column",
+                      "data_type": "double",
+                      "description": null,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

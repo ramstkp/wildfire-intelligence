@@ -1,0 +1,838 @@
+{
+  "schema_version": 82,
+  "autoRefresh": {
+    "enabled": true,
+    "defaultInterval": "30s"
+  },
+  "changeDetection": {
+    "kind": "liveUpdates",
+    "minRefreshRate": "10s",
+    "fallbackRefreshRate": "1m"
+  },
+  "tiles": [
+    {
+      "id": "cc6aa6fe-9dd9-433b-a266-5cbb3114d086",
+      "title": "Situation right now",
+      "visualType": "multistat",
+      "pageId": "2d5999a6-d901-4bdc-b880-b2224b5bbc41",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 3
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "6af7cfd3-907e-4aec-9be6-4e3ae84ae5a8"
+      },
+      "visualOptions": {
+        "multiStat__textSize": "auto",
+        "multiStat__valueColumn": null,
+        "multiStat__labelColumn": null,
+        "multiStat__displayOrientation": "horizontal",
+        "multiStat__slot": {
+          "width": 2,
+          "height": 1
+        },
+        "colorRulesDisabled": true,
+        "colorRules": []
+      }
+    },
+    {
+      "id": "541f180e-1be7-4b7f-8c95-cd4835a461d9",
+      "title": "Live fire map, bubble size is radiative power",
+      "visualType": "map",
+      "pageId": "2d5999a6-d901-4bdc-b880-b2224b5bbc41",
+      "layout": {
+        "x": 0,
+        "y": 3,
+        "width": 16,
+        "height": 11
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "95eb5de9-8654-4a7a-bf01-742beafc30d7"
+      },
+      "visualOptions": {
+        "map__latitudeColumn": "fire_lat",
+        "map__longitudeColumn": "fire_lon",
+        "map__labelColumn": "nearest_commune",
+        "map__sizeColumn": "frp_total",
+        "map__sizeDisabled": false,
+        "map__geoType": "numeric",
+        "map__geoPointColumn": null
+      }
+    },
+    {
+      "id": "3e2a522a-14ee-41eb-be20-e7a0b072e2ad",
+      "title": "Fires by severity",
+      "visualType": "pie",
+      "pageId": "2d5999a6-d901-4bdc-b880-b2224b5bbc41",
+      "layout": {
+        "x": 16,
+        "y": 3,
+        "width": 8,
+        "height": 5
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "3a375e2e-6b04-42ad-8391-c8a07ab38d53"
+      },
+      "visualOptions": {
+        "hideLegend": false,
+        "legendLocation": "right",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "labelDisabled": false,
+        "pie__label": [
+          "name",
+          "value"
+        ],
+        "tooltipDisabled": false,
+        "pie__tooltip": [
+          "name",
+          "percentage",
+          "value"
+        ],
+        "pie__orderBy": "size",
+        "pie__kind": "donut",
+        "pie__topNSlices": null,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "b7149605-3599-40be-9bcf-fca74ca869c5",
+      "title": "Time to impact, soonest first",
+      "visualType": "table",
+      "pageId": "2d5999a6-d901-4bdc-b880-b2224b5bbc41",
+      "layout": {
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 6
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "fa70c141-61ea-4b68-ba5d-13d0564be56c"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "056f0847-97fb-4c90-9259-1eced27bb5df",
+      "title": "Dispatch priority and recommended action",
+      "visualType": "table",
+      "pageId": "2d5999a6-d901-4bdc-b880-b2224b5bbc41",
+      "layout": {
+        "x": 0,
+        "y": 14,
+        "width": 24,
+        "height": 8
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "5f5fded4-680c-4c87-91af-42e686423464"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "2bac11cc-b692-43e3-b0af-8077cb00aacf",
+      "title": "Why geostationary changes the game, last 24h",
+      "visualType": "table",
+      "pageId": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 5
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "52eb2621-f638-4dfa-8ad3-476e96832edd"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "f320a6b4-339e-48c9-8f6d-bd56b0f7cd32",
+      "title": "Detection to dashboard latency",
+      "visualType": "table",
+      "pageId": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b",
+      "layout": {
+        "x": 12,
+        "y": 0,
+        "width": 12,
+        "height": 5
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "3c6b96b4-104f-4a8e-98e4-f26aedfe1ad4"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "7b30f7a8-575c-423a-a09f-a8718afcd17d",
+      "title": "Fire intensity over time, six largest fires",
+      "visualType": "line",
+      "pageId": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b",
+      "layout": {
+        "x": 0,
+        "y": 5,
+        "width": 24,
+        "height": 9
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "93c5a574-d8b8-4917-9009-f764403a22ef"
+      },
+      "visualOptions": {
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumn": "frame",
+        "xColumnTitle": "",
+        "yColumns": [
+          "frp_mw"
+        ],
+        "yColumnTitle": "",
+        "seriesColumns": [
+          "s2_cell"
+        ],
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "yAxisRight": false,
+        "yAxisMinimumValue": null,
+        "yAxisMaximumValue": null,
+        "hideDataLabels": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "21fe92ee-badd-41a0-8a33-acb172d5398c",
+      "title": "Fastest growing fires",
+      "visualType": "table",
+      "pageId": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b",
+      "layout": {
+        "x": 0,
+        "y": 14,
+        "width": 12,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "5c08b19b-2b4d-49ed-8f38-ddea86c6de74"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "b50e7e0c-36d9-4f4d-9b58-60e4658411c0",
+      "title": "New ignitions, first seen in the last 3 hours",
+      "visualType": "table",
+      "pageId": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b",
+      "layout": {
+        "x": 12,
+        "y": 14,
+        "width": 12,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "46ccfcaf-6820-475d-8cfe-853ddd4f0141"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "a249b4de-7462-447f-abcd-57d0cb86117a",
+      "title": "Fire danger classification",
+      "visualType": "pie",
+      "pageId": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 8,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "6a1c839e-597c-4394-ace0-be3d4410c809"
+      },
+      "visualOptions": {
+        "hideLegend": false,
+        "legendLocation": "right",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "labelDisabled": false,
+        "pie__label": [
+          "name",
+          "value"
+        ],
+        "tooltipDisabled": false,
+        "pie__tooltip": [
+          "name",
+          "percentage",
+          "value"
+        ],
+        "pie__orderBy": "size",
+        "pie__kind": "donut",
+        "pie__topNSlices": null,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "22c70d1d-6bbb-4400-ad36-973dbac797d1",
+      "title": "Fire Weather Index across the grid",
+      "visualType": "map",
+      "pageId": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613",
+      "layout": {
+        "x": 8,
+        "y": 0,
+        "width": 16,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "68721112-410c-4ae5-9269-c4ff07bfdfa5"
+      },
+      "visualOptions": {
+        "map__latitudeColumn": "latitude",
+        "map__longitudeColumn": "longitude",
+        "map__labelColumn": "danger",
+        "map__sizeColumn": "fwi",
+        "map__sizeDisabled": false,
+        "map__geoType": "numeric",
+        "map__geoPointColumn": null
+      }
+    },
+    {
+      "id": "1fb9469e-3f9b-46a3-9144-0c1fd6213eb4",
+      "title": "Canadian Fire Weather Index, driest and windiest first",
+      "visualType": "table",
+      "pageId": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613",
+      "layout": {
+        "x": 0,
+        "y": 7,
+        "width": 24,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "22085d84-6b7c-4bcc-b8e4-b58891c597d8"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "3aa6f603-0f50-4a2b-96bf-849358d463fb",
+      "title": "Smoke goes where the flames do not, surface vs 850 hPa",
+      "visualType": "table",
+      "pageId": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613",
+      "layout": {
+        "x": 0,
+        "y": 14,
+        "width": 12,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "d1d39f10-0334-493f-820a-9034f7d82e45"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "6a6cfec2-3bff-47fc-ac18-c7cf69c30f35",
+      "title": "Wind, gusts and fuel dryness",
+      "visualType": "table",
+      "pageId": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613",
+      "layout": {
+        "x": 12,
+        "y": 14,
+        "width": 12,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "ff543977-9903-48b6-bd78-af6179f8ad6a"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "2c86aeb8-ed47-4202-b714-01216c4bb83a",
+      "title": "Response posture",
+      "visualType": "multistat",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 3
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "38256ee2-b33c-4ef8-841d-6e5023309661"
+      },
+      "visualOptions": {
+        "multiStat__textSize": "auto",
+        "multiStat__valueColumn": null,
+        "multiStat__labelColumn": null,
+        "multiStat__displayOrientation": "horizontal",
+        "multiStat__slot": {
+          "width": 3,
+          "height": 1
+        },
+        "colorRulesDisabled": true,
+        "colorRules": []
+      }
+    },
+    {
+      "id": "c8d407b4-c1ab-4bc5-9023-f24eec6ebf4a",
+      "title": "Firefighting aircraft airborne",
+      "visualType": "map",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 0,
+        "y": 3,
+        "width": 12,
+        "height": 8
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "39687500-ce2a-4d4b-9957-444812831595"
+      },
+      "visualOptions": {
+        "map__latitudeColumn": "latitude",
+        "map__longitudeColumn": "longitude",
+        "map__labelColumn": "callsign",
+        "map__sizeColumn": "altitude_m",
+        "map__sizeDisabled": false,
+        "map__geoType": "numeric",
+        "map__geoPointColumn": null
+      }
+    },
+    {
+      "id": "1adb6546-6892-4f93-a4c2-31b4c5ae503f",
+      "title": "Aerial fleet status",
+      "visualType": "table",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 12,
+        "y": 3,
+        "width": 12,
+        "height": 8
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "8a05c914-2fb4-4ec8-8061-7e86687391b9"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "9e4419da-74e9-4da8-bf97-30ded7a7fc7a",
+      "title": "Ground unit availability",
+      "visualType": "bar",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 0,
+        "y": 11,
+        "width": 8,
+        "height": 6
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "f5925134-0276-4fdd-a0cd-395f14832e68"
+      },
+      "visualOptions": {
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumn": "Status",
+        "xColumnTitle": "",
+        "yColumns": [
+          "Units"
+        ],
+        "yColumnTitle": "",
+        "seriesColumns": null,
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "yAxisRight": false,
+        "yAxisMinimumValue": null,
+        "yAxisMaximumValue": null,
+        "hideDataLabels": false,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "81425c8b-eaae-4458-9984-b3ed97bc7b8d",
+      "title": "Nearest scoopable water",
+      "visualType": "table",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 8,
+        "y": 11,
+        "width": 8,
+        "height": 6
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "88ff21c2-a55d-4e92-8faf-5c02351c46da"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "8eddc68a-4fea-44de-a814-28e291532a1d",
+      "title": "Critical infrastructure within 10 km",
+      "visualType": "table",
+      "pageId": "f6a7c192-1bd2-4983-a127-f9ebc83e5253",
+      "layout": {
+        "x": 16,
+        "y": 11,
+        "width": 8,
+        "height": 6
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "c02a5145-8df9-4957-990b-8a1ec0db389d"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    }
+  ],
+  "baseQueries": [],
+  "parameters": [],
+  "dataSources": [
+    {
+      "kind": "kusto-trident",
+      "id": "28eb31df-5f86-4160-99f2-b21689347ea3",
+      "name": "EH_Wildfire",
+      "clusterUri": "",
+      "databaseArtifactId": "c2cc1354-e82d-4fe3-8ca5-9de90ca41a65",
+      "database": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "workspace": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Command centre",
+      "id": "2d5999a6-d901-4bdc-b880-b2224b5bbc41"
+    },
+    {
+      "name": "Early warning",
+      "id": "e3b3094f-5f07-435f-bf9e-f6ff6be2da3b"
+    },
+    {
+      "name": "Fire weather",
+      "id": "8b4c3a7d-1a4e-4651-92a0-5d2ad27ef613"
+    },
+    {
+      "name": "Response",
+      "id": "f6a7c192-1bd2-4983-a127-f9ebc83e5253"
+    }
+  ],
+  "queries": [
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "LiveKpis()\n| project ['Active fires'] = active_zones,\n          ['Critical'] = critical_zones,\n          ['Growing'] = growing_zones,\n          ['Communes at risk'] = communes_at_risk,\n          ['People at risk'] = pop_at_risk,\n          ['People downwind'] = pop_downwind,\n          ['Feed age min'] = feed_age_min",
+      "id": "6af7cfd3-907e-4aec-9be6-4e3ae84ae5a8",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "DispatchPriority(6h, 3.0, 30000.0)\n| project fire_lat, fire_lon, frp_total, priority_score, severity,\n          nearest_commune, pop_exposed, pop_downwind, trend, growth_pct",
+      "id": "95eb5de9-8654-4a7a-bf01-742beafc30d7",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "DispatchPriority(6h, 3.0, 30000.0)\n| summarize ['Fires'] = count() by ['Severity'] = severity",
+      "id": "3a375e2e-6b04-42ad-8391-c8a07ab38d53",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "ZoneExposure(6h, 3.0, 30000.0)\n| extend dryness = ((100.0 - coalesce(humidity_pct, 60.0)) / 100.0)\n                 * (1.0 + coalesce(vpd_kpa, 1.0) / 3.0)\n| extend spread_kmh = round(0.05 + 0.045 * coalesce(wind_speed_kmh, 0.0) * dryness, 2)\n| extend dist_km = round(dist_nearest_m / 1000.0, 1)\n| extend eta_h = round(dist_km / spread_kmh, 1)\n| where eta_h <= 48\n| project ['Commune'] = nearest_commune,\n          ['ETA hours'] = eta_h,\n          ['Distance km'] = dist_km,\n          ['Spread km/h'] = spread_kmh,\n          ['People'] = pop_exposed,\n          ['Downwind'] = pop_downwind,\n          ['Trend'] = trend\n| order by ['ETA hours'] asc\n| take 15",
+      "id": "fa70c141-61ea-4b68-ba5d-13d0564be56c",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "DispatchPriority(6h, 3.0, 30000.0)\n| project ['Severity'] = severity,\n          ['Score'] = priority_score,\n          ['Commune'] = nearest_commune,\n          ['Dept'] = nearest_dept,\n          ['FRP MW'] = frp_total,\n          ['Trend'] = trend,\n          ['Growth %'] = growth_pct,\n          ['Exposed'] = pop_exposed,\n          ['Downwind'] = pop_downwind,\n          ['Recommended action'] = recommendation\n| order by ['Score'] desc\n| take 20",
+      "id": "5f5fded4-680c-4c87-91af-42e686423464",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "gold_fire_dedup\n| where acq_datetime > ago(24h)\n| where sensor_class in ('geostationary', 'polar')\n| summarize ['Satellites'] = dcount(satellite),\n            ['Observations'] = count(),\n            ['Distinct 10-min frames'] = dcount(bin(acq_datetime, 10m)),\n            ['Fire zones seen'] = dcount(s2_cell)\n  by ['Sensor tier'] = sensor_class\n| order by ['Distinct 10-min frames'] desc",
+      "id": "52eb2621-f638-4dfa-8ad3-476e96832edd",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "gold_fire_dedup\n| where ingest_ts > ago(6h)\n| where sensor_class in ('geostationary', 'polar')\n| extend lag_min = (ingest_ts - acq_datetime) / 1m\n| where lag_min between (0.0 .. 600.0)\n| summarize ['Median lag min'] = round(percentile(lag_min, 50), 1),\n            ['P90 lag min'] = round(percentile(lag_min, 90), 1),\n            ['Detections'] = count()\n  by ['Sensor tier'] = sensor_class",
+      "id": "3c6b96b4-104f-4a8e-98e4-f26aedfe1ad4",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "let top_zones = ActiveFireZones(12h, 3.0)\n    | top 6 by frp_total desc\n    | project s2_cell;\ngold_fire_dedup\n| where acq_datetime > ago(12h)\n| where s2_cell in (top_zones)\n| summarize frp_mw = sum(frp) by frame = bin(acq_datetime, 10m), s2_cell\n| order by frame asc",
+      "id": "93c5a574-d8b8-4917-9009-f764403a22ef",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "ActiveFireZones(12h, 3.0)\n| where frames >= 2\n| project ['Zone'] = s2_cell,\n          ['Growth %'] = growth_pct,\n          ['Trend'] = trend,\n          ['FRP now MW'] = frp_close,\n          ['FRP start MW'] = frp_open,\n          ['Peak MW'] = frp_max,\n          ['Frames'] = frames\n| order by ['Growth %'] desc\n| take 15",
+      "id": "5c08b19b-2b4d-49ed-8f38-ddea86c6de74",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "ActiveFireZones(6h, 3.0)\n| where first_seen > ago(3h)\n| project ['Zone'] = s2_cell,\n          ['First seen'] = first_seen,\n          ['FRP MW'] = frp_total,\n          ['Peak MW'] = frp_max,\n          ['Detections'] = detections,\n          ['Trend'] = trend\n| order by ['First seen'] desc\n| take 15",
+      "id": "46ccfcaf-6820-475d-8cfe-853ddd4f0141",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "bronze_weather_raw\n| where ingest_ts > ago(6h)\n| extend lat = round(toreal(event.latitude), 2), lon = round(toreal(event.longitude), 2)\n| summarize arg_max(ingest_ts, event) by lat, lon\n| extend danger = tostring(event.fire_danger)\n| where isnotempty(danger)\n| summarize ['Grid points'] = count() by ['Fire danger'] = danger",
+      "id": "6a1c839e-597c-4394-ace0-be3d4410c809",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "bronze_weather_raw\n| where ingest_ts > ago(6h)\n| extend lat = round(toreal(event.latitude), 2), lon = round(toreal(event.longitude), 2)\n| summarize arg_max(ingest_ts, event) by lat, lon\n| project latitude = lat, longitude = lon,\n          fwi = toreal(event.fwi),\n          danger = tostring(event.fire_danger),\n          wind_kmh = toreal(event.wind_speed_kmh),\n          temp_c = toreal(event.temperature_c)\n| where isnotnull(fwi)",
+      "id": "68721112-410c-4ae5-9269-c4ff07bfdfa5",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "bronze_weather_raw\n| where ingest_ts > ago(6h)\n| extend lat = round(toreal(event.latitude), 2), lon = round(toreal(event.longitude), 2)\n| summarize arg_max(ingest_ts, event) by lat, lon\n| extend fwi = toreal(event.fwi)\n| where isnotnull(fwi)\n| project ['Lat'] = lat, ['Lon'] = lon,\n          ['FWI'] = fwi,\n          ['Danger'] = tostring(event.fire_danger),\n          ['FFMC fine fuel'] = toreal(event.ffmc),\n          ['ISI spread'] = toreal(event.isi),\n          ['BUI fuel load'] = toreal(event.bui),\n          ['Wind km/h'] = toreal(event.wind_speed_kmh),\n          ['Gust km/h'] = toreal(event.wind_gust_kmh),\n          ['RH %'] = toreal(event.humidity_pct)\n| order by ['FWI'] desc\n| take 20",
+      "id": "22085d84-6b7c-4bcc-b8e4-b58891c597d8",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "bronze_weather_raw\n| where ingest_ts > ago(6h)\n| extend lat = round(toreal(event.latitude), 2), lon = round(toreal(event.longitude), 2)\n| summarize arg_max(ingest_ts, event) by lat, lon\n| extend shear = toreal(event.plume_shear_deg)\n| where isnotnull(shear)\n| project ['Lat'] = lat, ['Lon'] = lon,\n          ['Divergence deg'] = round(shear, 0),\n          ['Fire heading deg'] = round(toreal(event.wind_direction_deg), 0),\n          ['Smoke heading deg'] = round(toreal(event.wind_850_dir), 0),\n          ['Smoke wind km/h'] = round(toreal(event.wind_850_speed), 1),\n          ['PM2.5'] = toreal(event.pm2_5)\n| order by ['Divergence deg'] desc\n| take 20",
+      "id": "d1d39f10-0334-493f-820a-9034f7d82e45",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "bronze_weather_raw\n| where ingest_ts > ago(6h)\n| extend lat = round(toreal(event.latitude), 2), lon = round(toreal(event.longitude), 2)\n| summarize arg_max(ingest_ts, event) by lat, lon\n| extend gust = toreal(event.wind_gust_kmh)\n| where isnotnull(gust)\n| project ['Lat'] = lat, ['Lon'] = lon,\n          ['Wind km/h'] = toreal(event.wind_speed_kmh),\n          ['Gust km/h'] = gust,\n          ['VPD kPa'] = toreal(event.vpd_kpa),\n          ['Soil moisture'] = toreal(event.soil_moisture),\n          ['Temp C'] = toreal(event.temperature_c),\n          ['CAPE'] = toreal(event.cape)\n| order by ['Gust km/h'] desc\n| take 20",
+      "id": "ff543977-9903-48b6-bd78-af6179f8ad6a",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "DispatchPriority(6h, 3.0, 30000.0)\n| summarize ['Zones needing air'] = countif(frp_total >= 30.0),\n            ['Water within 40 km'] = countif(water_dist_km <= 40.0),\n            ['Zones with infra at risk'] = countif(infra_count > 0),\n            ['Mean unit distance km'] = round(avg(unit_dist_km), 1)",
+      "id": "38256ee2-b33c-4ef8-841d-6e5023309661",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "gold_aircraft_latest\n| where is_firefighting and not(on_ground)\n| project latitude, longitude, callsign, aircraft_role, altitude_m, velocity_ms",
+      "id": "39687500-ce2a-4d4b-9957-444812831595",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "gold_aircraft_latest\n| where is_firefighting\n| project ['Callsign'] = callsign,\n          ['Role'] = aircraft_role,\n          ['Altitude m'] = altitude_m,\n          ['Speed m/s'] = velocity_ms,\n          ['On ground'] = on_ground,\n          ['Last seen'] = ingest_ts\n| order by ['Last seen'] desc\n| take 25",
+      "id": "8a05c914-2fb4-4ec8-8061-7e86687391b9",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "ref_ground_units\n| summarize ['Units'] = count() by ['Status'] = status",
+      "id": "f5925134-0276-4fdd-a0cd-395f14832e68",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "NearestWater(6h, 3.0)\n| project ['Zone'] = s2_cell,\n          ['Water body'] = water_name,\n          ['Distance km'] = water_dist_km\n| order by ['Distance km'] asc\n| take 20",
+      "id": "88ff21c2-a55d-4e92-8faf-5c02351c46da",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "28eb31df-5f86-4160-99f2-b21689347ea3"
+      },
+      "text": "InfraAtRisk(6h, 3.0, 10000.0)\n| project ['Zone'] = s2_cell,\n          ['Assets at risk'] = infra_count,\n          ['Assets'] = infra_list\n| order by ['Assets at risk'] desc\n| take 20",
+      "id": "c02a5145-8df9-4957-990b-8a1ec0db389d",
+      "usedVariables": []
+    }
+  ],
+  "embeddedApps": []
+}

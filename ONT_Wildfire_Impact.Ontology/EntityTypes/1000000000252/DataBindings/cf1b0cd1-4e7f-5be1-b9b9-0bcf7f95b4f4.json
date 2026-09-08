@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "cf1b0cd1-4e7f-5be1-b9b9-0bcf7f95b4f4",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000259"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000266"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000273"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000280"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000287"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000294"
+      },
+      {
+        "sourceColumnName": "Category",
+        "targetPropertyId": "1000000000301"
+      },
+      {
+        "sourceColumnName": "Interpretation",
+        "targetPropertyId": "1000000000308"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_criticalinfrastructure",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

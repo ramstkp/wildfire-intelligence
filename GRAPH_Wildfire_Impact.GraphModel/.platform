@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "GraphModel",
+    "displayName": "GRAPH_Wildfire_Impact",
+    "description": "Thermal observations to communities, infrastructure, wind and response context. Historical mode is explicit; proximity is not confirmed impact."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d1f2481b-cd03-bfcf-4615-6031c2e71fb2"
+  }
+}

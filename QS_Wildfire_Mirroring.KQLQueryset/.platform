@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "KQLQueryset",
+    "displayName": "QS_Wildfire_Mirroring",
+    "description": "QS_Wildfire_Mirroring"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "de9bee32-14de-892d-40e6-e30b68adc22b"
+  }
+}

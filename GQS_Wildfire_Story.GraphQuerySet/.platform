@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "GraphQuerySet",
+    "displayName": "GQS_Wildfire_Story"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "490ad3ba-103a-bd12-48b8-1a6f3e69afcb"
+  }
+}

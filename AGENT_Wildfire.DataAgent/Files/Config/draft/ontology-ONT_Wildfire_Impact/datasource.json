@@ -1,0 +1,76 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/dataAgent/definition/dataSource/1.0.0/schema.json",
+  "artifactId": "569658b4-f93a-a274-4c55-a682912a8ef3",
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
+  "dataSourceInstructions": null,
+  "displayName": "ONT_Wildfire_Impact",
+  "type": "ontology",
+  "userDescription": null,
+  "metadata": null,
+  "elements": [
+    {
+      "id": "FireZone",
+      "is_selected": true,
+      "display_name": "FireZone",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,LastSeen,PeakDetectionMW,LatestFrameMW,DetectionCount,ObservationStatus,GrowthPct,Interpretation",
+      "children": []
+    },
+    {
+      "id": "Detection",
+      "is_selected": true,
+      "display_name": "Detection",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,ObservedAt,Satellite,SensorTier,FrpMW",
+      "children": []
+    },
+    {
+      "id": "Commune",
+      "is_selected": true,
+      "display_name": "Commune",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,Population,Department,Interpretation",
+      "children": []
+    },
+    {
+      "id": "CriticalInfrastructure",
+      "is_selected": true,
+      "display_name": "CriticalInfrastructure",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,Category,Interpretation",
+      "children": []
+    },
+    {
+      "id": "Aircraft",
+      "is_selected": true,
+      "display_name": "Aircraft",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,ObservedAt,Role,InferredFirefighting,HeadingDeg,AltitudeM,Interpretation",
+      "children": []
+    },
+    {
+      "id": "Weather",
+      "is_selected": true,
+      "display_name": "Weather",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,ObservedAt,WindFromDeg,WindToDeg,WindKmh,HumidityPct",
+      "children": []
+    },
+    {
+      "id": "FireStation",
+      "is_selected": true,
+      "display_name": "FireStation",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,Category,Interpretation",
+      "children": []
+    },
+    {
+      "id": "WaterBody",
+      "is_selected": true,
+      "display_name": "WaterBody",
+      "type": "ontology.entity",
+      "description": "Id,Name,Latitude,Longitude,SnapshotTime,Mode,Category,Interpretation",
+      "children": []
+    }
+  ]
+}

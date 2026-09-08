@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "04_ingest_aircraft",
+    "description": "OpenSky live aircraft over France, Securite Civile fleet detection -> Eventstream"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8c8c8d47-2a9f-9e6e-49a8-f63bd49fae9b"
+  }
+}

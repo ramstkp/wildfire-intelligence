@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/relationshipType/1.0.0/schema.json",
+  "namespace": "usertypes",
+  "id": "1000000000623",
+  "name": "nearCommune",
+  "namespaceType": "Custom",
+  "source": {
+    "entityTypeId": "1000000000007"
+  },
+  "target": {
+    "entityTypeId": "1000000000182"
+  }
+}

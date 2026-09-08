@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Map",
+    "displayName": "Wildfire Atlas - Live",
+    "description": "DEMO live freshness-gated thermal anomalies (3h and 24h context), aircraft (30min), winds (2h) and estimated infrastructure proximity. Regional reference layers optional. Historical observations are in a separate Map."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1992aefe-6998-8d37-4167-fed0d7945435"
+  }
+}

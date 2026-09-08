@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "b2682587-4885-5d18-9bb1-dc99a796630b",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000413"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000420"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000427"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000434"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000441"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000448"
+      },
+      {
+        "sourceColumnName": "ObservedAt",
+        "targetPropertyId": "1000000000455"
+      },
+      {
+        "sourceColumnName": "WindFromDeg",
+        "targetPropertyId": "1000000000462"
+      },
+      {
+        "sourceColumnName": "WindToDeg",
+        "targetPropertyId": "1000000000469"
+      },
+      {
+        "sourceColumnName": "WindKmh",
+        "targetPropertyId": "1000000000476"
+      },
+      {
+        "sourceColumnName": "HumidityPct",
+        "targetPropertyId": "1000000000483"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_weather",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

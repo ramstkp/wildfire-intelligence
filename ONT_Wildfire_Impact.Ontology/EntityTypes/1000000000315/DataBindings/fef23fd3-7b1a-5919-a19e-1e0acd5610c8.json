@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "fef23fd3-7b1a-5919-a19e-1e0acd5610c8",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000322"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000329"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000336"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000343"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000350"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000357"
+      },
+      {
+        "sourceColumnName": "ObservedAt",
+        "targetPropertyId": "1000000000364"
+      },
+      {
+        "sourceColumnName": "Role",
+        "targetPropertyId": "1000000000371"
+      },
+      {
+        "sourceColumnName": "InferredFirefighting",
+        "targetPropertyId": "1000000000378"
+      },
+      {
+        "sourceColumnName": "HeadingDeg",
+        "targetPropertyId": "1000000000385"
+      },
+      {
+        "sourceColumnName": "AltitudeM",
+        "targetPropertyId": "1000000000392"
+      },
+      {
+        "sourceColumnName": "Interpretation",
+        "targetPropertyId": "1000000000399"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_aircraft",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

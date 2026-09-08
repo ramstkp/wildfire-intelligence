@@ -1,0 +1,21 @@
+{
+  "queryset": {
+    "version": "1.0.0",
+    "dataSources": [
+      {
+        "id": "632a669b-4c13-4f2c-8cbc-57cbef1b23d3",
+        "clusterUri": "https://trd-5p0sz1v1d66h8c34ma.z5.kusto.fabric.microsoft.com",
+        "type": "AzureDataExplorer",
+        "databaseName": "EH_Wildfire"
+      }
+    ],
+    "tabs": [
+      {
+        "id": "d8c12fca-1fc0-4202-bba0-1b75bd8d3d02",
+        "content": "// OneLake mirroring: Eventhouse EH_Wildfire\n// Mirrors every table to OneLake as Delta/Parquet with a 5-minute target latency,\n// so Spark, the SQL endpoint and the ontology can read Eventhouse data without a copy.\n// Applied 2026-09-05. Re-run safe: .alter-merge only changes the fields supplied.\n\n// ---------- enable mirroring ----------\n.alter-merge table bronze_fire_raw policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table bronze_weather_raw policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table bronze_aircraft_raw policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_communes policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_fire_stations policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_water_bodies policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_critical_infra policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_ground_units policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table ref_gdacs_alerts policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table silver_fire_detections policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table silver_weather policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n.alter-merge table silver_aircraft policy mirroring dataformat=parquet with (IsEnabled=true, TargetLatencyInMinutes=5)\n\n// ---------- verify ----------\n.show table * policy mirroring\n| project EntityName, Policy\n| extend p = parse_json(Policy)\n| project EntityName,\n          IsEnabled  = tobool(p.IsEnabled),\n          Format     = tostring(p.Format),\n          LatencyMin = toint(p.TargetLatencyInMinutes)\n| sort by EntityName asc\n\n// ---------- disable (rollback) ----------\n// .alter-merge table bronze_fire_raw policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table bronze_weather_raw policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table bronze_aircraft_raw policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_communes policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_fire_stations policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_water_bodies policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_critical_infra policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_ground_units policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table ref_gdacs_alerts policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table silver_fire_detections policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table silver_weather policy mirroring dataformat=parquet with (IsEnabled=false)\n// .alter-merge table silver_aircraft policy mirroring dataformat=parquet with (IsEnabled=false)\n",
+        "title": "OneLake mirroring",
+        "dataSourceId": "632a669b-4c13-4f2c-8cbc-57cbef1b23d3"
+      }
+    ]
+  }
+}

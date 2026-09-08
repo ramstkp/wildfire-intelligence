@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/contextualization/1.0.0/schema.json",
+  "id": "6138f3b6-74cf-5bf2-82d7-dcfc468ecaf3",
+  "dataBindingTable": {
+    "workspaceId": "00000000-0000-0000-0000-000000000000",
+    "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+    "sourceTableName": "edge_observedin",
+    "sourceSchema": "graph_wildfires",
+    "sourceType": "LakehouseTable"
+  },
+  "sourceKeyRefBindings": [
+    {
+      "sourceColumnName": "SourceId",
+      "targetPropertyId": "1000000000112"
+    }
+  ],
+  "targetKeyRefBindings": [
+    {
+      "sourceColumnName": "TargetId",
+      "targetPropertyId": "1000000000014"
+    }
+  ]
+}

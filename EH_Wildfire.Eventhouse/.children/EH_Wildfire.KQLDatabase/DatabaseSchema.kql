@@ -1,0 +1,601 @@
+// KQL script
+// Use management commands in this script to configure your database items, such as tables, functions, materialized views, and more.
+
+
+.create-merge table bronze_fire_raw (event:dynamic, ingest_ts:datetime) 
+.create-or-alter table bronze_fire_raw ingestion json mapping 'bronze_fire_mapping'
+```
+[{"Properties":{"Path":"$"},"column":"event","datatype":""},{"Properties":{"Path":"$.ingest_ts"},"column":"ingest_ts","datatype":""}]
+```
+.create-merge table bronze_weather_raw (event:dynamic, ingest_ts:datetime) 
+.create-or-alter table bronze_weather_raw ingestion json mapping 'bronze_weather_mapping'
+```
+[{"Properties":{"Path":"$"},"column":"event","datatype":""},{"Properties":{"Path":"$.ingest_ts"},"column":"ingest_ts","datatype":""}]
+```
+.create-merge table bronze_aircraft_raw (event:dynamic, ingest_ts:datetime) 
+.create-or-alter table bronze_aircraft_raw ingestion json mapping 'bronze_aircraft_mapping'
+```
+[{"Properties":{"Path":"$"},"column":"event","datatype":""},{"Properties":{"Path":"$.ingest_ts"},"column":"ingest_ts","datatype":""}]
+```
+.create-merge table ref_communes (commune_id:string, commune:string, dept:string, region:string, population:long, latitude:real, longitude:real, s2_cell:string) 
+.create-merge table ref_fire_stations (station_id:string, name:string, operator:string, latitude:real, longitude:real, station_type:string, source:string) 
+.create-merge table ref_water_bodies (water_id:string, name:string, water_type:string, latitude:real, longitude:real, scoopable:bool) 
+.create-merge table ref_critical_infra (infra_id:string, name:string, infra_type:string, latitude:real, longitude:real, commune:string) 
+.create-merge table ref_ground_units (unit_id:string, station_id:string, unit_type:string, latitude:real, longitude:real, status:string, is_simulated:bool, updated_at:datetime) 
+.create-merge table ref_gdacs_alerts (event_id:string, event_name:string, alert_level:string, country:string, latitude:real, longitude:real, from_date:datetime, to_date:datetime, glide:string, ingest_ts:datetime) 
+.create-merge table silver_fire_detections (detection_id:string, latitude:real, longitude:real, frp:real, brightness:real, confidence:string, satellite:string, instrument:string, acq_datetime:datetime, daynight:string, sensor_class:string, s2_cell:string, ingest_ts:datetime) 
+.create-merge table silver_weather (grid_id:string, latitude:real, longitude:real, temperature_c:real, humidity_pct:real, wind_speed_kmh:real, wind_direction_deg:real, soil_moisture:real, vpd_kpa:real, pm2_5:real, observed_at:datetime, ingest_ts:datetime) 
+.create-merge table silver_aircraft (icao24:string, callsign:string, aircraft_role:string, latitude:real, longitude:real, altitude_m:real, velocity_ms:real, heading_deg:real, on_ground:bool, is_firefighting:bool, ingest_ts:datetime) 
+.create-or-alter function with (folder = "UpdatePolicy", docstring = "Bronze to silver: parse and type raw fire detections.", skipvalidation = "true") ParseFireDetections() {
+    bronze_fire_raw
+    | extend
+        latitude   = toreal(event.latitude),
+        longitude  = toreal(event.longitude),
+        frp        = toreal(event.frp),
+        brightness = toreal(event.brightness),
+        confidence = tostring(event.confidence),
+        satellite  = tostring(event.satellite),
+        instrument = tostring(event.instrument),
+        acq_date   = tostring(event.acq_date),
+        acq_time   = tostring(event.acq_time),
+        daynight   = tostring(event.daynight)
+    | where isnotnull(latitude) and isnotnull(longitude)
+    // FIRMS returns -999 as its null sentinel for FRP and brightness.
+    | extend frp = iff(frp <= 0.0, 0.0, frp)
+    | extend brightness = iff(brightness < 0.0, real(null), brightness)
+    // acq_time arrives as HHmm without a separator, and drops leading zeros.
+    | extend acq_padded = substring(strcat('0000', acq_time), strlen(strcat('0000', acq_time)) - 4, 4)
+    // acq_date may arrive as a plain string or already coerced to datetime by the
+    // dynamic column, so normalise via todatetime and add the time as a timespan.
+    | extend acq_day = todatetime(acq_date)
+    | extend acq_datetime = acq_day + totimespan(strcat(substring(acq_padded, 0, 2), ':',
+                                                       substring(acq_padded, 2, 2), ':00'))
+    // Geostationary satellites refresh every ~10 min; polar orbiters twice a day.
+    // Downstream logic treats these very differently, so classify at silver.
+    | extend sensor_class = case(
+          satellite startswith 'Met' or satellite startswith 'G1' or satellite startswith 'G2', 'geostationary',
+          satellite in ('N', 'N20', 'N21', '1', 'Aqua', 'Terra'), 'polar',
+                                                                  'unknown')
+    | extend s2_cell = geo_point_to_s2cell(longitude, latitude, 12)
+    | extend detection_id = strcat(tostring(round(latitude, 4)), '_',
+                                   tostring(round(longitude, 4)), '_',
+                                   format_datetime(acq_day, 'yyyyMMdd'), acq_padded, '_', satellite)
+    | project detection_id, latitude, longitude, frp, brightness, confidence,
+              satellite, instrument, acq_datetime, daynight, sensor_class,
+              s2_cell, ingest_ts
+}
+.create-or-alter function with (folder = "UpdatePolicy", docstring = "Bronze to silver: parse weather and air quality observations.", skipvalidation = "true") ParseWeather() {
+    bronze_weather_raw
+    | extend
+        latitude           = toreal(event.latitude),
+        longitude          = toreal(event.longitude),
+        temperature_c      = toreal(event.temperature_c),
+        humidity_pct       = toreal(event.humidity_pct),
+        wind_speed_kmh     = toreal(event.wind_speed_kmh),
+        wind_direction_deg = toreal(event.wind_direction_deg),
+        soil_moisture      = toreal(event.soil_moisture),
+        vpd_kpa            = toreal(event.vpd_kpa),
+        pm2_5              = toreal(event.pm2_5),
+        observed_at        = todatetime(event.observed_at)
+    | where isnotnull(latitude) and isnotnull(longitude)
+    | extend grid_id = strcat(tostring(round(latitude, 1)), '_', tostring(round(longitude, 1)))
+    | project grid_id, latitude, longitude, temperature_c, humidity_pct,
+              wind_speed_kmh, wind_direction_deg, soil_moisture, vpd_kpa,
+              pm2_5, observed_at, ingest_ts
+}
+.create-or-alter function with (folder = "UpdatePolicy", docstring = "Bronze to silver: parse aircraft state vectors.", skipvalidation = "true") ParseAircraft() {
+    bronze_aircraft_raw
+    | extend
+        icao24     = tostring(event.icao24),
+        callsign   = trim(' ', toupper(tostring(event.callsign))),
+        latitude   = toreal(event.latitude),
+        longitude  = toreal(event.longitude),
+        altitude_m = toreal(event.altitude_m),
+        velocity_ms= toreal(event.velocity_ms),
+        heading_deg= toreal(event.heading_deg),
+        on_ground  = tobool(event.on_ground)
+    | where isnotnull(latitude) and isnotnull(longitude)
+    // Sécurité Civile callsigns: PELICAN = Canadair CL-415,
+    // MILAN = Dash-8, DRAGON = helicopter.
+    | extend aircraft_role = case(
+          callsign startswith 'PELICAN', 'PELICAN',
+          callsign startswith 'MILAN',   'MILAN',
+          callsign startswith 'DRAGON',  'DRAGON',
+                                         '')
+    | extend is_firefighting = aircraft_role != ''
+    | project icao24, callsign, aircraft_role, latitude, longitude, altitude_m,
+              velocity_ms, heading_deg, on_ground, is_firefighting, ingest_ts
+}
+.create-or-alter function with (folder = "Wildfire", docstring = "Active fire zones over a lookback window. Sources gold_fire_dedup so a FIRMS detection re-delivered by the rolling window is counted once. Growth compares the first and last 10-minute frame explicitly via arg_min/arg_max rather than relying on make_list ordering.", skipvalidation = "true") ActiveFireZones(lookback:timespan=time(03:00:00), min_frp:real=5.0) {
+    gold_fire_dedup
+    | where acq_datetime > ago(lookback)
+    | extend frame = bin(acq_datetime, 10m)
+    | summarize
+        frp_frame = sum(frp),
+        frp_peak  = max(frp),
+        dets      = dcount(detection_id),
+        lat       = avg(latitude),
+        lon       = avg(longitude)
+      by s2_cell, frame
+    | summarize
+        frp_total  = sum(frp_frame),
+        frp_max    = max(frp_peak),
+        detections = sum(dets),
+        fire_lat   = avg(lat),
+        fire_lon   = avg(lon),
+        frames     = dcount(frame),
+        (first_seen, frp_open)  = arg_min(frame, frp_frame),
+        (last_seen,  frp_close) = arg_max(frame, frp_frame)
+      by s2_cell
+    | where frp_max >= min_frp
+    | extend growth_pct = iff(frp_open > 0.0, round((frp_close - frp_open) / frp_open * 100.0, 1), 0.0)
+    | extend trend = case(growth_pct >= 25.0, 'GROWING',
+                          growth_pct <= -25.0, 'DECLINING',
+                                               'STABLE')
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Population and infrastructure exposure, weighted by wind direction.", skipvalidation = "true") ZoneExposure(lookback:timespan=time(03:00:00), min_frp:real=5.0, radius_m:real=30000.0) {
+    ActiveFireZones(lookback, min_frp)
+    | extend k = 1
+    | join kind=leftouter (
+        gold_weather_latest
+        | project w_lat = latitude, w_lon = longitude,
+                  wind_speed_kmh, wind_direction_deg, humidity_pct, vpd_kpa, pm2_5
+        | extend k = 1
+      ) on k
+    | extend w_dist = geo_distance_2points(fire_lon, fire_lat, w_lon, w_lat)
+    | summarize (w_dist, wind_speed_kmh, wind_direction_deg, humidity_pct, vpd_kpa, pm2_5)
+                = arg_min(w_dist, wind_speed_kmh, wind_direction_deg, humidity_pct, vpd_kpa, pm2_5),
+                frp_total = take_any(frp_total), frp_max = take_any(frp_max),
+                detections = take_any(detections), fire_lat = take_any(fire_lat),
+                fire_lon = take_any(fire_lon), last_seen = take_any(last_seen),
+                growth_pct = take_any(growth_pct), trend = take_any(trend), frames = take_any(frames)
+      by s2_cell
+    | extend k = 1
+    | join kind=inner (
+        ref_communes
+        | project commune, dept, population, c_lat = latitude, c_lon = longitude
+        | extend k = 1
+      ) on k
+    | extend dist_m = geo_distance_2points(fire_lon, fire_lat, c_lon, c_lat)
+    | where dist_m <= radius_m
+    // Bearing from the fire to the commune. If that bearing aligns with the wind
+    // direction, the commune is downwind and at materially higher risk. This is
+    // the analytical payoff of ingesting wind: exposure stops being a plain
+    // radius and becomes directional.
+    | extend d_lon = (c_lon - fire_lon) * cos(radians((fire_lat + c_lat) / 2.0))
+    | extend d_lat = (c_lat - fire_lat)
+    | extend bearing_deg = (todouble(atan2(d_lon, d_lat)) * 180.0 / pi() + 360.0) % 360.0
+    | extend wind_delta = abs(((bearing_deg - coalesce(wind_direction_deg, bearing_deg)) + 540.0) % 360.0 - 180.0)
+    | extend downwind = wind_delta <= 45.0
+    | summarize
+        pop_exposed    = sum(population),
+        pop_downwind   = sumif(population, downwind),
+        communes_at_risk = dcount(commune),
+        (dist_nearest_m, nearest_commune, nearest_dept) = arg_min(dist_m, commune, dept),
+        fire_lat = take_any(fire_lat), fire_lon = take_any(fire_lon),
+        frp_total = take_any(frp_total), frp_max = take_any(frp_max),
+        detections = take_any(detections), last_seen = take_any(last_seen),
+        growth_pct = take_any(growth_pct), trend = take_any(trend), frames = take_any(frames),
+        wind_speed_kmh = take_any(wind_speed_kmh), wind_direction_deg = take_any(wind_direction_deg),
+        humidity_pct = take_any(humidity_pct), vpd_kpa = take_any(vpd_kpa), pm2_5 = take_any(pm2_5)
+      by s2_cell
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Nearest available ground unit per fire zone.", skipvalidation = "true") NearestGroundUnit(lookback:timespan=time(03:00:00), min_frp:real=5.0) {
+    ActiveFireZones(lookback, min_frp)
+    | extend k = 1
+    | join kind=inner (
+        ref_ground_units
+        | where status == 'available'
+        | project unit_id, unit_type, u_lat = latitude, u_lon = longitude
+        | extend k = 1
+      ) on k
+    | extend unit_dist_km = round(geo_distance_2points(fire_lon, fire_lat, u_lon, u_lat) / 1000.0, 1)
+    | summarize (unit_dist_km, unit_id, unit_type) = arg_min(unit_dist_km, unit_id, unit_type) by s2_cell
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Nearest firefighting aircraft per fire zone.", skipvalidation = "true") NearestAircraft(lookback:timespan=time(03:00:00), min_frp:real=5.0) {
+    ActiveFireZones(lookback, min_frp)
+    | extend k = 1
+    | join kind=inner (
+        gold_aircraft_latest
+        | where is_firefighting
+        | project callsign, aircraft_role, a_lat = latitude, a_lon = longitude
+        | extend k = 1
+      ) on k
+    | extend ac_dist_km = round(geo_distance_2points(fire_lon, fire_lat, a_lon, a_lat) / 1000.0, 1)
+    | summarize (ac_dist_km, callsign, aircraft_role) = arg_min(ac_dist_km, callsign, aircraft_role) by s2_cell
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Nearest scoopable water body, which constrains aerial tasking.", skipvalidation = "true") NearestWater(lookback:timespan=time(03:00:00), min_frp:real=5.0) {
+    ActiveFireZones(lookback, min_frp)
+    | extend k = 1
+    | join kind=inner (
+        ref_water_bodies
+        | where scoopable
+        | project water_id, water_name = name, wb_lat = latitude, wb_lon = longitude
+        | extend k = 1
+      ) on k
+    | extend water_dist_km = round(geo_distance_2points(fire_lon, fire_lat, wb_lon, wb_lat) / 1000.0, 1)
+    | summarize (water_dist_km, water_id, water_name) = arg_min(water_dist_km, water_id, water_name) by s2_cell
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Critical infrastructure within reach of a fire zone.", skipvalidation = "true") InfraAtRisk(lookback:timespan=time(03:00:00), min_frp:real=5.0, radius_m:real=10000.0) {
+    ActiveFireZones(lookback, min_frp)
+    | extend k = 1
+    | join kind=inner (
+        ref_critical_infra
+        | project infra_id, infra_name = name, infra_type, i_lat = latitude, i_lon = longitude
+        | extend k = 1
+      ) on k
+    | extend infra_dist_m = geo_distance_2points(fire_lon, fire_lat, i_lon, i_lat)
+    | where infra_dist_m <= radius_m
+    | summarize infra_count = count(), infra_list = make_set(infra_name, 5) by s2_cell
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Full dispatch picture: physical risk score plus a concrete recommendation.", skipvalidation = "true") DispatchPriority(lookback:timespan=time(03:00:00), min_frp:real=5.0, radius_m:real=30000.0) {
+    ZoneExposure(lookback, min_frp, radius_m)
+    | join kind=leftouter NearestGroundUnit(lookback, min_frp) on s2_cell
+    | join kind=leftouter NearestAircraft(lookback, min_frp) on s2_cell
+    | join kind=leftouter NearestWater(lookback, min_frp) on s2_cell
+    | join kind=leftouter InfraAtRisk(lookback, min_frp) on s2_cell
+    | extend infra_count = coalesce(infra_count, 0)
+    // Priority is built from physical drivers rather than an arbitrary formula.
+    // A naive frp + population/100 lets population dominate by ~1000x, which
+    // ranks industrial heat next to a city above a real wildfire.
+    | extend
+        intensity  = frp_total,
+        exposure   = log10(todouble(pop_exposed) + 10.0),
+        // Downwind population counts roughly double, since that is where the
+        // fire is actually heading.
+        downwind_f = 1.0 + (todouble(pop_downwind) / (todouble(pop_exposed) + 1.0)),
+        // Dry, windy conditions accelerate spread.
+        weather_f  = 1.0 + (coalesce(wind_speed_kmh, 0.0) / 50.0)
+                         + (coalesce(vpd_kpa, 0.0) / 4.0)
+                         + iff(coalesce(humidity_pct, 100.0) < 30.0, 0.3, 0.0),
+        growth_f   = 1.0 + (max_of(growth_pct, 0.0) / 100.0),
+        infra_f    = 1.0 + (infra_count * 0.15)
+    | extend priority_score = round(intensity * exposure * downwind_f * weather_f * growth_f * infra_f, 1)
+    | extend severity = case(priority_score >= 400.0, 'CRITICAL',
+                             priority_score >= 200.0, 'HIGH',
+                             priority_score >= 80.0,  'MODERATE',
+                                                      'LOW')
+    | extend recommendation = case(
+          frp_total >= 30.0 and pop_downwind >= 10000,
+              strcat('AIR + GROUND. ', tostring(pop_downwind), ' people downwind. Deploy ',
+                     coalesce(callsign, 'aerial asset'), ' and ', coalesce(unit_id, 'nearest station')),
+          frp_total >= 30.0 and coalesce(water_dist_km, 999.0) <= 40.0,
+              strcat('AIR. Scoopable water ', tostring(coalesce(water_dist_km, 0.0)),
+                     ' km at ', coalesce(water_name, 'unknown'), '. Deploy ', coalesce(callsign, 'aerial asset')),
+          pop_exposed >= 50000,
+              strcat('GROUND. Housing at risk. Deploy ', coalesce(unit_id, 'nearest station')),
+              strcat('MONITOR. Nearest unit ', coalesce(unit_id, 'n/a'),
+                     ' at ', tostring(coalesce(unit_dist_km, 0.0)), ' km'))
+    | project s2_cell, nearest_commune, nearest_dept, fire_lat, fire_lon,
+              frp_total, frp_max, detections, frames, growth_pct, trend,
+              pop_exposed, pop_downwind, communes_at_risk, infra_count, infra_list,
+              wind_speed_kmh, wind_direction_deg, humidity_pct, vpd_kpa, pm2_5,
+              unit_id, unit_type, unit_dist_km, callsign, aircraft_role, ac_dist_km,
+              water_name, water_dist_km, priority_score, severity, recommendation, last_seen
+    | order by priority_score desc
+}
+.create-or-alter function with (folder = "Dispatch", docstring = "Activator source: critical or rapidly growing unassigned fires.", skipvalidation = "true") CriticalFires(threshold:real=200.0) {
+    DispatchPriority(1h, 5.0, 30000.0)
+    | where priority_score >= threshold or (trend == 'GROWING' and priority_score >= 100.0)
+    | project s2_cell, nearest_commune, nearest_dept, fire_lat, fire_lon,
+              frp_total, growth_pct, trend, pop_exposed, pop_downwind,
+              priority_score, severity, recommendation, last_seen
+}
+.create-or-alter function with (folder = "Wildfire", docstring = "Headline KPIs. Population is counted per distinct commune, not summed across zones, because a commune inside several fire radii would otherwise be counted several times.", skipvalidation = "true") LiveKpis() {
+    let zw = ActiveFireZones(3h, 5.0)
+        | extend k = 1
+        | join kind=leftouter (
+            gold_weather_latest
+            | project w_lat = latitude, w_lon = longitude, wind_direction_deg
+            | extend k = 1) on k
+        | extend w_dist = geo_distance_2points(fire_lon, fire_lat, w_lon, w_lat)
+        | summarize (w_dist, wind_direction_deg) = arg_min(w_dist, wind_direction_deg),
+                    fire_lat = take_any(fire_lat), fire_lon = take_any(fire_lon)
+          by s2_cell;
+    let people = zw
+        | extend k = 1
+        | join kind=inner (
+            ref_communes
+            | project commune_id, population, c_lat = latitude, c_lon = longitude
+            | extend k = 1) on k
+        | extend dist = geo_distance_2points(fire_lon, fire_lat, c_lon, c_lat)
+        | where dist <= 30000.0
+        | extend d_lon = (c_lon - fire_lon) * cos(radians((fire_lat + c_lat) / 2.0))
+        | extend d_lat = (c_lat - fire_lat)
+        | extend bearing = (todouble(atan2(d_lon, d_lat)) * 180.0 / pi() + 360.0) % 360.0
+        | extend wind_delta = abs(((bearing - coalesce(wind_direction_deg, bearing)) + 540.0) % 360.0 - 180.0)
+        | summarize downwind = max(wind_delta <= 45.0) by commune_id, population
+        | summarize pop_at_risk = sum(population),
+                    pop_downwind = sumif(population, downwind),
+                    communes_at_risk = count();
+    DispatchPriority(3h, 5.0, 30000.0)
+    | summarize active_zones   = count(),
+                critical_zones = countif(severity == 'CRITICAL'),
+                growing_zones  = countif(trend == 'GROWING'),
+                max_score      = max(priority_score),
+                last_detection = max(last_seen)
+    | extend k = 1
+    | join kind=leftouter (people | extend k = 1) on k
+    | extend feed_age_min = round((now() - last_detection) / 1m, 1)
+    | project active_zones, critical_zones, growing_zones,
+              communes_at_risk, pop_at_risk, pop_downwind,
+              max_score, last_detection, feed_age_min
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; explicit freshness and non-operational interpretation", skipvalidation = "true") MapWF_Detections24h() {
+gold_fire_dedup
+| where satellite in~ ('N','N20','N21','Terra','Aqua','Met10','Met11','Met12')
+| where instrument !contains 'TEST' and instrument !contains 'synthetic'
+| where detection_id !contains 'TEST' and detection_id !contains 'synthetic'
+| where latitude between (41.0..51.5) and longitude between (-5.5..9.8)
+| where isnotnull(acq_datetime) and acq_datetime <= now()
+| where acq_datetime >= ago(24h)
+| project detection_id, latitude, longitude, frp_mw=frp, satellite, instrument,
+          acquired_utc=acq_datetime, age_minutes=round((now()-acq_datetime)/1m,1),
+          freshness=iff(acq_datetime>=ago(3h),'FRESH <=3h','CONTEXT 3-24h'),
+          interpretation='DEMO: satellite thermal anomaly; not a verified wildfire perimeter. FRP is this observation only.'
+| take 50000
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; reference assets within 10km of any thermal anomaly. Uses the full anomaly set, not the top-30 cells, so assets are not silently dropped. Proximity only, not verified impact.", skipvalidation = "true") MapWF_CriticalInfra() {
+let fires = MapWF_FireLocations24h()
+    | project cell, flat = latitude, flon = longitude, fire_peak_mw = peak_frp_mw,
+              fire_last_seen = last_observed_utc;
+ref_critical_infra
+| extend j = 1
+| join kind=inner (fires | extend j = 1) on j
+| extend distance_km = round(geo_distance_2points(longitude, latitude, flon, flat) / 1000.0, 2)
+| where distance_km <= 10
+| summarize arg_min(distance_km, *) by infra_id
+| extend asset_group = case(
+      infra_type has 'Hopital' or infra_type has 'social', 'Health or social',
+      infra_type has 'Ecole' or infra_type has 'cole', 'School or nursery',
+      infra_type has 'Camping', 'Campsite',
+                              'Other reference asset')
+| project infra_id, name, infra_type, asset_group, commune, latitude, longitude,
+          distance_km, nearest_fire_peak_mw = fire_peak_mw,
+          nearest_fire_last_seen = fire_last_seen,
+          interpretation = strcat('DEMO: reference asset ', tostring(distance_km),
+              ' km from the nearest satellite thermal anomaly. Straight-line proximity only.',
+              ' NOT verified impact, damage, closure, evacuation or operational status.')
+| take 10000
+}
+
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; explicit freshness and non-operational interpretation", skipvalidation = "true") MapWF_Aircraft() {
+gold_aircraft_latest
+| where ingest_ts between (ago(30m)..now())
+| where latitude between (41.0..51.5) and longitude between (-5.5..9.8) and on_ground==false
+| project icao24,callsign,latitude,longitude,altitude_m,velocity_ms,heading_deg,position_received_utc=ingest_ts,
+          age_minutes=round((now()-ingest_ts)/1m,1),
+          classification=iff(is_firefighting,'INFERRED firefighting candidate','Other observed aircraft'),
+          interpretation='DEMO: nearby is NOT assigned. Classification inferred; freshness uses ingestion time because source position time is unavailable.'
+| take 20000
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; aircraft below 3000m within 50km of a thermal anomaly, plus any firefighting-flagged aircraft. Proximity only, never a tasking.", skipvalidation = "true") MapWF_AircraftTracks() {
+let max_alt_m = 3000.0;
+let max_km = 50.0;
+let fires = MapWF_FireLocations24h() | project flon = longitude, flat = latitude;
+let current = silver_aircraft
+    | where ingest_ts between (ago(30m)..now()) and on_ground == false
+    | where latitude between (41.0..51.5) and longitude between (-5.5..9.8)
+    | summarize arg_max(ingest_ts, latitude, longitude, altitude_m, is_firefighting) by icao24;
+let scored = current
+    | extend j = 1
+    | join kind=inner (fires | extend j = 1) on j
+    | extend d_km = geo_distance_2points(longitude, latitude, flon, flat) / 1000
+    | summarize nearest_fire_km = round(min(d_km), 1),
+                sel_alt = take_any(altitude_m),
+                sel_ff = take_any(is_firefighting)
+      by icao24
+    | where sel_ff == true or (sel_alt <= max_alt_m and nearest_fire_km <= max_km);
+let keep = toscalar(scored | summarize make_set(icao24, 20000));
+let facts = scored | project icao24, nearest_fire_km, sel_alt, sel_ff;
+silver_aircraft
+| where ingest_ts between (ago(30m)..now()) and on_ground == false
+| where latitude between (41.0..51.5) and longitude between (-5.5..9.8)
+| where icao24 in (keep)
+| summarize arg_max(ingest_ts, *) by icao24, latitude, longitude
+| order by icao24 asc, ingest_ts asc
+| extend ptxt = strcat('[', tostring(round(longitude, 5)), ',', tostring(round(latitude, 5)), ']')
+| summarize pts = make_list(ptxt, 300),
+            positions = count(),
+            last_received_utc = max(ingest_ts),
+            role = take_any(aircraft_role)
+  by icao24, callsign
+| where array_length(pts) >= 2
+| join kind=inner facts on icao24
+| extend geometry = todynamic(strcat('{"type":"LineString","coordinates":[',
+                                     strcat_array(pts, ','), ']}'))
+| extend track_km = round(geo_line_length(geometry) / 1000, 1)
+| where isnotnull(track_km)
+| extend category = iff(sel_ff == true, 'FIREFIGHTING-FLAGGED', 'Low level near detection')
+| extend altitude_m = round(sel_alt)
+| extend interpretation = strcat('DEMO: observed positions received within 30 min; straight ',
+      'segments connect samples. Selected because ',
+      iff(sel_ff == true,
+          'the feed flags this aircraft as firefighting.',
+          strcat('it was below 3000 m and within 50 km of a thermal anomaly (nearest ',
+                 tostring(nearest_fire_km), ' km).')),
+      ' Proximity is not a tasking, assignment or dispatch.')
+| project icao24, callsign, category, role, altitude_m, nearest_fire_km, positions,
+          track_km, last_received_utc, geometry, interpretation
+| take 10000
+}
+
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; explicit freshness and non-operational interpretation", skipvalidation = "true") MapWF_Weather() {
+bronze_weather_raw
+| extend latitude=todouble(event.latitude),longitude=todouble(event.longitude),observed_at=todatetime(event.observed_at)
+| where observed_at between (ago(2h)..now())
+| summarize arg_max(observed_at,*) by latitude,longitude
+| project latitude,longitude,observed_at,temperature_c=todouble(event.temperature_c),humidity_pct=todouble(event.humidity_pct),
+          surface_speed_kmh=todouble(event.wind_speed_kmh),surface_from_deg=todouble(event.wind_direction_deg),
+          aloft_speed_kmh=todouble(event.wind_850_speed),aloft_from_deg=todouble(event.wind_850_dir)
+| take 5000
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; explicit freshness and non-operational interpretation", skipvalidation = "true") MapWF_Freshness() {
+let f=toscalar(MapWF_Detections24h() | count);
+let a=toscalar(MapWF_Aircraft() | count);
+let w=toscalar(MapWF_Weather() | count);
+let latest_fire=toscalar(gold_fire_dedup
+| where satellite in~ ('N','N20','N21','Terra','Aqua','Met10','Met11','Met12')
+| where instrument !contains 'TEST' and instrument !contains 'synthetic'
+| where detection_id !contains 'TEST' and detection_id !contains 'synthetic'
+| where acq_datetime<=now() | summarize max(acq_datetime));
+let latest_aircraft=toscalar(gold_aircraft_latest | where ingest_ts<=now() | summarize max(ingest_ts));
+let latest_weather=toscalar(silver_weather | where observed_at<=now() | summarize max(observed_at));
+print latitude=43.04,longitude=2.4,
+      label=strcat('DEMO / latest thermal data ',round((now()-latest_fire)/1h,1),'h old - CLICK'),
+      checked_utc=now(),real_thermal_observations_24h=f,airborne_positions_30m=a,weather_grids_2h=w,
+      latest_thermal_acquired_utc=latest_fire,thermal_age_hours=round((now()-latest_fire)/1h,1),
+      latest_aircraft_received_utc=latest_aircraft,aircraft_age_hours=round((now()-latest_aircraft)/1h,1),
+      latest_weather_observed_utc=latest_weather,weather_age_hours=round((now()-latest_weather)/1h,1),
+      interpretation='Empty live layers mean freshness gate excluded data. Historical layers are explicitly dated snapshots, never live. No dispatch, perimeter or spread forecast.'
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; explicit freshness and non-operational interpretation", skipvalidation = "true") MapWF_SurfaceWind() {
+MapWF_Weather()
+| extend speed_kmh=surface_speed_kmh,from_deg=surface_from_deg
+| where isnotnull(speed_kmh) and speed_kmh>0 and from_deg between(0.0..360.0)
+| extend to_deg=(from_deg+180.0)%360.0
+| extend r=radians(to_deg),len_km=min_of(12.0,max_of(3.0,speed_kmh/3.0))
+| extend dx=len_km*sin(r)/(111.32*cos(radians(latitude))),dy=len_km*cos(r)/111.32
+| extend ex=longitude+dx,ey=latitude+dy
+| extend left=pack_array(ex-dx*0.25-dy*0.13,ey-dy*0.25+dx*0.13),
+         right=pack_array(ex-dx*0.25+dy*0.13,ey-dy*0.25-dx*0.13)
+| project observed_at,speed_kmh,from_deg,to_deg,level='Surface',
+          geometry=bag_pack('type','MultiLineString','coordinates',pack_array(pack_array(pack_array(longitude,latitude),pack_array(ex,ey)),pack_array(left,pack_array(ex,ey),right))),
+          interpretation='DEMO: arrows point downwind TO (meteorological FROM +180). Length is symbolic, not plume or spread prediction.'
+}
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; thermal anomalies grouped to ~1km cells with a 2.0 MW floor to drop the weakest single-pixel returns", skipvalidation = "true") MapWF_FireLocations24h() {
+MapWF_Detections24h()
+| extend cell = geo_point_to_s2cell(longitude, latitude, 12)
+| summarize observations = count(),
+            satellites_seen = dcount(satellite),
+            peak_frp_mw = round(max(frp_mw), 1),
+            first_observed_utc = min(acquired_utc),
+            (last_observed_utc, latest_frp_mw) = arg_max(acquired_utc, frp_mw),
+            satellite_list = strcat_array(make_set(satellite, 6), ', '),
+            latitude = avg(latitude),
+            longitude = avg(longitude)
+  by cell
+| where peak_frp_mw >= 2.0
+| extend latest_frp_mw = round(latest_frp_mw, 1)
+| extend observed_over_hours = round((last_observed_utc - first_observed_utc) / 1h, 1)
+| extend age_minutes = round((now() - last_observed_utc) / 1m, 1)
+| extend freshness = iff(last_observed_utc >= ago(3h), 'FRESH <=3h', 'CONTEXT 3-24h')
+| extend interpretation = strcat('DEMO: ', tostring(observations),
+      ' satellite observation(s) grouped into one ~1km cell, peak >= 2.0 MW.',
+      ' Thermal anomaly, not a verified wildfire or perimeter.')
+| project cell, latitude, longitude, freshness, age_minutes, peak_frp_mw, latest_frp_mw,
+          observations, satellites_seen, satellite_list, first_observed_utc,
+          last_observed_utc, observed_over_hours, interpretation
+}
+
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; heuristic active-fire candidates = seen <=6h AND peak >=5 MW AND corroborated by repeat or multi-satellite observation. Inference, not a confirmed wildfire.", skipvalidation = "true") MapWF_ActiveFires() {
+let recent_hours = 6;
+let min_peak_mw = 5.0;
+gold_fire_dedup
+| where satellite in~ ('N','N20','N21','Terra','Aqua','Met10','Met11','Met12')
+| where instrument !contains 'TEST' and instrument !contains 'synthetic'
+| where detection_id !contains 'TEST' and detection_id !contains 'synthetic'
+| where latitude between (41.0..51.5) and longitude between (-5.5..9.8)
+| where isnotnull(acq_datetime) and acq_datetime <= now() and acq_datetime >= ago(12h)
+| extend cell = geo_point_to_s2cell(longitude, latitude, 12)
+| summarize observations = count(),
+            satellites_seen = dcount(satellite),
+            peak_frp_mw = round(max(frp), 1),
+            first_observed_utc = min(acq_datetime),
+            (last_observed_utc, latest_frp_mw) = arg_max(acq_datetime, frp),
+            satellite_list = strcat_array(make_set(satellite, 6), ', '),
+            latitude = avg(latitude),
+            longitude = avg(longitude)
+  by cell
+| extend age_minutes = round((now() - last_observed_utc) / 1m, 1)
+| extend observed_over_hours = round((last_observed_utc - first_observed_utc) / 1h, 1)
+| extend corroborated = observations >= 2 or satellites_seen >= 2
+| where age_minutes <= recent_hours * 60
+| where peak_frp_mw >= min_peak_mw
+| where corroborated
+| extend latest_frp_mw = round(latest_frp_mw, 1)
+| extend intensity_band = case(peak_frp_mw >= 50.0, 'VERY HIGH >=50 MW',
+                               peak_frp_mw >= 25.0, 'HIGH 25-50 MW',
+                               peak_frp_mw >= 10.0, 'MODERATE 10-25 MW',
+                                                    'LOW 5-10 MW')
+| extend basis = strcat('Last seen ', tostring(age_minutes), ' min ago; peak ',
+      tostring(peak_frp_mw), ' MW; ', tostring(observations), ' observation(s) from ',
+      tostring(satellites_seen), ' satellite(s): ', satellite_list)
+| extend interpretation = strcat('DEMO HEURISTIC active-fire candidate. Criteria: seen within 6h,',
+      ' peak FRP >= 5 MW, and corroborated by a repeat or second-satellite observation.',
+      ' This is an inference from thermal anomalies, NOT a confirmed wildfire, perimeter,',
+      ' spread forecast or dispatch instruction. No growth trend is shown because polar and',
+      ' geostationary sensors are not directly comparable frame to frame.')
+| project cell, latitude, longitude, intensity_band, peak_frp_mw, latest_frp_mw,
+          age_minutes, last_observed_utc, first_observed_utc, observed_over_hours,
+          observations, satellites_seen, satellite_list, basis, interpretation
+}
+
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; reference fire stations within 25km of a thermal anomaly. Proximity only - crewing, appliances and availability are unknown.", skipvalidation = "true") MapWF_FireStations() {
+let fires = MapWF_FireLocations24h()
+    | project flat = latitude, flon = longitude, fire_peak_mw = peak_frp_mw,
+              fire_last_seen = last_observed_utc;
+ref_fire_stations
+| extend j = 1
+| join kind=inner (fires | extend j = 1) on j
+| extend distance_km = round(geo_distance_2points(longitude, latitude, flon, flat) / 1000.0, 2)
+| where distance_km <= 25.0
+| summarize arg_min(distance_km, *) by station_id
+| project station_id, name, station_type, operator, latitude, longitude, distance_km,
+          nearest_fire_peak_mw = fire_peak_mw, nearest_fire_last_seen = fire_last_seen,
+          interpretation = strcat('DEMO: reference fire station ', tostring(distance_km),
+              ' km from the nearest thermal anomaly. Straight-line proximity only.',
+              ' Crewing, appliances, availability and response time are NOT known and',
+              ' nothing here is a dispatch or tasking.')
+| take 10000
+}
+
+.create-or-alter function with (folder = "Map/Wildfire", docstring = "DEMO map; reference scoopable water within 40km of a thermal anomaly. The scoopable flag is reference metadata, not verified access or safety.", skipvalidation = "true") MapWF_ScoopableWater() {
+let fires = MapWF_FireLocations24h()
+    | project flat = latitude, flon = longitude, fire_peak_mw = peak_frp_mw,
+              fire_last_seen = last_observed_utc;
+ref_water_bodies
+| where scoopable == true
+| extend j = 1
+| join kind=inner (fires | extend j = 1) on j
+| extend distance_km = round(geo_distance_2points(longitude, latitude, flon, flat) / 1000.0, 2)
+| where distance_km <= 40.0
+| summarize arg_min(distance_km, *) by water_id
+| project water_id, name, water_type, latitude, longitude, distance_km,
+          nearest_fire_peak_mw = fire_peak_mw, nearest_fire_last_seen = fire_last_seen,
+          interpretation = strcat('DEMO: reference water body marked scoopable, ',
+              tostring(distance_km), ' km from the nearest thermal anomaly.',
+              ' The scoopable flag comes from reference data; depth, access, obstructions',
+              ' and safety clearance are NOT verified.')
+| take 10000
+}
+
+.create-or-alter materialized-view with (DocString = "Detections clustered into fire zones per 10-minute frame.", Folder = "Gold")  gold_fire_zones on table silver_fire_detections { silver_fire_detections
+    | summarize
+        frp_total   = sum(frp),
+        frp_max     = max(frp),
+        detections  = dcount(detection_id),
+        fire_lat    = avg(latitude),
+        fire_lon    = avg(longitude),
+        first_seen  = min(acq_datetime),
+        last_seen   = max(acq_datetime),
+        satellites  = make_set(satellite, 5)
+      by s2_cell, frame = bin(acq_datetime, 10m) }
+.create-or-alter materialized-view with (DocString = "Most recent weather observation per grid cell.", Folder = "Gold")  gold_weather_latest on table silver_weather { silver_weather
+    | summarize arg_max(observed_at, *) by grid_id }
+.create-or-alter materialized-view with (DocString = "Most recent position per aircraft.", Folder = "Gold")  gold_aircraft_latest on table silver_aircraft { silver_aircraft
+    | summarize arg_max(ingest_ts, *) by icao24 }
+.create-or-alter materialized-view with (DocString = "One row per unique FIRMS detection. FIRMS returns a rolling window, so each scheduled ingest republishes detections already seen; without this every sum(frp) is inflated by the number of times a detection has been re-delivered.")  gold_fire_dedup on table silver_fire_detections { silver_fire_detections
+    | summarize arg_min(ingest_ts, *) by detection_id }
+.alter table bronze_fire_raw policy retention @'{"SoftDeletePeriod":"7.00:00:00","Recoverability":"Enabled"}'
+.alter table bronze_fire_raw policy ingestionbatching @'{"MaximumBatchingTimeSpan":"00:00:10","MaximumNumberOfItems":100,"MaximumRawDataSizeMB":100,"Origin":0}'
+.alter table bronze_weather_raw policy retention @'{"SoftDeletePeriod":"7.00:00:00","Recoverability":"Enabled"}'
+.alter table bronze_weather_raw policy ingestionbatching @'{"MaximumBatchingTimeSpan":"00:00:10","MaximumNumberOfItems":100,"MaximumRawDataSizeMB":100,"Origin":0}'
+.alter table bronze_aircraft_raw policy retention @'{"SoftDeletePeriod":"7.00:00:00","Recoverability":"Enabled"}'
+.alter table bronze_aircraft_raw policy ingestionbatching @'{"MaximumBatchingTimeSpan":"00:00:10","MaximumNumberOfItems":100,"MaximumRawDataSizeMB":100,"Origin":0}'
+.alter table silver_fire_detections policy retention @'{"SoftDeletePeriod":"30.00:00:00","Recoverability":"Enabled"}'
+.alter table silver_weather policy retention @'{"SoftDeletePeriod":"30.00:00:00","Recoverability":"Enabled"}'
+.alter table silver_aircraft policy retention @'{"SoftDeletePeriod":"7.00:00:00","Recoverability":"Enabled"}'
+.alter table silver_fire_detections policy update "[{\"IsEnabled\":true,\"Source\":\"bronze_fire_raw\",\"Query\":\"ParseFireDetections()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table silver_weather policy update "[{\"IsEnabled\":true,\"Source\":\"bronze_weather_raw\",\"Query\":\"ParseWeather()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table silver_aircraft policy update "[{\"IsEnabled\":true,\"Source\":\"bronze_aircraft_raw\",\"Query\":\"ParseAircraft()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"

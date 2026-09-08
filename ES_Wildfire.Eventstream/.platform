@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventstream",
+    "displayName": "ES_Wildfire"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bb5e06d7-2dfe-993b-45eb-7ee128d53d27"
+  }
+}

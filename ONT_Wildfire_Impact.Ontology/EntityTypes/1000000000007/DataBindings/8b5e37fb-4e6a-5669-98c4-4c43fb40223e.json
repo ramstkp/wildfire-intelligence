@@ -1,0 +1,68 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "8b5e37fb-4e6a-5669-98c4-4c43fb40223e",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000014"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000021"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000028"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000035"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000042"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000049"
+      },
+      {
+        "sourceColumnName": "LastSeen",
+        "targetPropertyId": "1000000000056"
+      },
+      {
+        "sourceColumnName": "PeakDetectionMW",
+        "targetPropertyId": "1000000000063"
+      },
+      {
+        "sourceColumnName": "LatestFrameMW",
+        "targetPropertyId": "1000000000070"
+      },
+      {
+        "sourceColumnName": "DetectionCount",
+        "targetPropertyId": "1000000000077"
+      },
+      {
+        "sourceColumnName": "ObservationStatus",
+        "targetPropertyId": "1000000000084"
+      },
+      {
+        "sourceColumnName": "GrowthPct",
+        "targetPropertyId": "1000000000091"
+      },
+      {
+        "sourceColumnName": "Interpretation",
+        "targetPropertyId": "1000000000098"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_firezone",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

@@ -1,0 +1,706 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/map/definition/2.0.0/schema.json",
+  "basemap": {
+    "options": {
+      "style": "road_shaded_relief",
+      "center": [
+        2.1618,
+        46.3331
+      ],
+      "zoom": 5,
+      "pitch": 0,
+      "showLabels": true
+    },
+    "controls": {
+      "zoom": true,
+      "compass": true,
+      "scale": true,
+      "style": true
+    }
+  },
+  "dataSources": [
+    {
+      "itemType": "Lakehouse",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25"
+    },
+    {
+      "itemType": "KqlDatabase",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354"
+    }
+  ],
+  "iconSources": [],
+  "layerSources": [
+    {
+      "id": "e3b5a4be-bd92-5835-b79f-2a7a603b07a8",
+      "name": "Thermal anomalies | last 24h, >=2 MW, size = intensity",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 300000
+    },
+    {
+      "id": "f8dc9bce-c9ba-5640-b8f3-e931d0246535",
+      "name": "People at risk | schools, hospitals, campsites within 10 km",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 60000
+    },
+    {
+      "id": "8823b729-5da2-5eaa-8eaa-517d4ad0ae26",
+      "name": "Wind direction | surface, heading TO",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 60000
+    },
+    {
+      "id": "7e32c266-4285-579b-93f1-7e31c761ecfa",
+      "name": "Aircraft | low level near detections, or firefighting-flagge",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 60000
+    },
+    {
+      "id": "2ce2540f-f0f3-597b-a5b4-2cae41f638a3",
+      "name": "Communes | reference boundaries, subset",
+      "type": "geojson",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "relativePath": "Files/maps/wildfire/communes_reference_boundaries.geojson",
+      "refreshIntervalMs": 0
+    },
+    {
+      "id": "c8417d1a-bd68-520a-9c58-ece7b6c3b65e",
+      "name": "Data freshness and limits | DEMO - click",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 60000
+    },
+    {
+      "id": "1f0a6b3c-5d2e-4a7b-9c81-6ee2b5d40a17",
+      "name": "Active fires | recent, >=5 MW, corroborated",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 60000
+    },
+    {
+      "id": "8a3f6d21-4c07-4b19-9e52-71ad30cf5b84",
+      "name": "Fire stations | within 25 km of a detection",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 300000
+    },
+    {
+      "id": "3d7b1e58-9a24-4f60-8c73-2b6194ea50df",
+      "name": "Scoopable water | within 40 km of a detection",
+      "type": "kusto",
+      "options": {
+        "cluster": false
+      },
+      "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+      "refreshIntervalMs": 300000
+    }
+  ],
+  "layerSettings": [
+    {
+      "id": "2c9d4e18-7b36-4f52-a0d9-3b7c81e6f204",
+      "name": "Active fires | recent, >=5 MW, corroborated",
+      "sourceId": "1f0a6b3c-5d2e-4a7b-9c81-6ee2b5d40a17",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "heatmap",
+        "bubbleOptions": {
+          "color": "#DC2626",
+          "sizeType": "range",
+          "sizeProperty": "peak_frp_mw",
+          "minSize": 12,
+          "maxSize": 34,
+          "opacity": 0.9,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 2
+        },
+        "tooltipKeys": [
+          "intensity_band",
+          "peak_frp_mw",
+          "age_minutes",
+          "last_observed_utc",
+          "observations",
+          "satellites_seen",
+          "satellite_list",
+          "basis",
+          "interpretation"
+        ],
+        "heatmapOptions": {
+          "opacity": 0.56,
+          "intensity": 11
+        }
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    },
+    {
+      "id": "847abc4c-e444-51ad-b65a-e09c8ed96008",
+      "name": "Thermal anomalies | last 24h, >=2 MW, size = intensity",
+      "sourceId": "e3b5a4be-bd92-5835-b79f-2a7a603b07a8",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#f79205",
+          "sizeType": "range",
+          "fixedSize": 12,
+          "opacity": 0.55,
+          "strokeColor": "#CA5010",
+          "strokeWidth": 3,
+          "sizeProperty": "peak_frp_mw",
+          "enableSeriesGroup": false,
+          "seriesGroup": "age_minutes",
+          "seriesGroupType": "range",
+          "minSize": 4,
+          "maxSize": 14
+        },
+        "lineOptions": {
+          "strokeColor": "#EF4444",
+          "strokeWidth": 2,
+          "strokeOpacity": 0.8
+        },
+        "polygonOptions": {
+          "fillColor": "#EF4444",
+          "fillOpacity": 0.1
+        },
+        "tooltipKeys": [
+          "freshness",
+          "last_observed_utc",
+          "age_minutes",
+          "peak_frp_mw",
+          "observations",
+          "satellites_seen",
+          "satellite_list",
+          "observed_over_hours",
+          "interpretation"
+        ],
+        "dataLabelOptions": {
+          "enabled": false,
+          "placement": "point"
+        },
+        "color": "#f79205"
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    },
+    {
+      "id": "57b9e483-fdf3-58b2-862a-4c0999ee3968",
+      "name": "People at risk | schools, hospitals, campsites within 10 km",
+      "sourceId": "f8dc9bce-c9ba-5640-b8f3-e931d0246535",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": [
+            "match",
+            [
+              "to-string",
+              [
+                "get",
+                "infra_type"
+              ]
+            ],
+            "Camping",
+            "#B9DCD2",
+            "Ecole",
+            "#49C5B1",
+            "Ecole maternelle",
+            "#225B62",
+            "Hopital",
+            "#FFE399",
+            "social_facility",
+            "#FEB903",
+            "#808080"
+          ],
+          "sizeType": "fixed",
+          "fixedSize": 11,
+          "opacity": 0.95,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 2,
+          "enableSeriesGroup": true,
+          "customColors": {},
+          "seriesGroup": "infra_type",
+          "customStepColors": [
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FFC8C7"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FF8D8D"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FF4556"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#D70635"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#900016"
+            }
+          ],
+          "seriesGroupType": "category",
+          "paletteId": "g"
+        },
+        "lineOptions": {
+          "strokeColor": "#C026D3",
+          "strokeWidth": 2,
+          "strokeOpacity": 0.8
+        },
+        "polygonOptions": {
+          "fillColor": "#C026D3",
+          "fillOpacity": 0.1
+        },
+        "tooltipKeys": [
+          "name",
+          "infra_type",
+          "commune",
+          "distance_km",
+          "last_acquired_utc",
+          "interpretation"
+        ],
+        "color": "#C026D3"
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    },
+    {
+      "id": "0fa66ffe-7f42-51b6-a721-b4083ad0f0b5",
+      "name": "Wind direction | surface, heading TO",
+      "sourceId": "8823b729-5da2-5eaa-8eaa-517d4ad0ae26",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#059669",
+          "sizeType": "fixed",
+          "fixedSize": 8,
+          "opacity": 0.85,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1
+        },
+        "lineOptions": {
+          "strokeColor": [
+            "step",
+            [
+              "to-number",
+              [
+                "get",
+                "speed_kmh"
+              ],
+              3.4
+            ],
+            "#FFBEFF",
+            5.58,
+            "#FF7BFF",
+            8.16,
+            "#D954DC",
+            10.74,
+            "#B22BB6",
+            13.32,
+            "#66006B"
+          ],
+          "strokeWidth": 4,
+          "strokeOpacity": 1,
+          "enableSeriesGroup": true,
+          "seriesGroup": "speed_kmh",
+          "customStepColors": [
+            {
+              "min": 3,
+              "max": 5.58,
+              "color": "#FFBEFF"
+            },
+            {
+              "min": 5.58,
+              "max": 8.16,
+              "color": "#FF7BFF"
+            },
+            {
+              "min": 8.16,
+              "max": 10.74,
+              "color": "#D954DC"
+            },
+            {
+              "min": 10.74,
+              "max": 13.32,
+              "color": "#B22BB6"
+            },
+            {
+              "min": 13.32,
+              "max": 15.9,
+              "color": "#66006B"
+            }
+          ],
+          "seriesGroupType": "range",
+          "paletteId": "c",
+          "stepId": "j"
+        },
+        "polygonOptions": {
+          "fillColor": "#059669",
+          "fillOpacity": 0.1
+        },
+        "tooltipKeys": [
+          "level",
+          "observed_at",
+          "speed_kmh",
+          "from_deg",
+          "to_deg",
+          "interpretation"
+        ]
+      },
+      "geometryColumnName": "geometry"
+    },
+    {
+      "id": "8af1f29f-2792-54b7-86e1-a3e29f8c281c",
+      "name": "Aircraft | low level near detections, or firefighting-flagged",
+      "sourceId": "7e32c266-4285-579b-93f1-7e31c761ecfa",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#22D3EE",
+          "sizeType": "fixed",
+          "fixedSize": 8,
+          "opacity": 0.85,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1
+        },
+        "lineOptions": {
+          "strokeColor": "#1D4ED8",
+          "strokeWidth": 2,
+          "strokeOpacity": 0.75,
+          "enableSeriesGroup": false,
+          "seriesGroup": "icao24",
+          "customStepColors": [
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FFC8C7"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FF8D8D"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#FF4556"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#D70635"
+            },
+            {
+              "min": 0,
+              "max": 0,
+              "color": "#900016"
+            }
+          ],
+          "seriesGroupType": "category"
+        },
+        "polygonOptions": {
+          "fillColor": "#22D3EE",
+          "fillOpacity": 0.1
+        },
+        "tooltipKeys": [
+          "callsign",
+          "positions",
+          "track_km",
+          "last_received_utc",
+          "interpretation"
+        ],
+        "color": "#4ef50c"
+      },
+      "geometryColumnName": "geometry"
+    },
+    {
+      "id": "18f525dd-e4bf-5172-9ad9-73ee1b5a0665",
+      "name": "Communes | reference boundaries, subset",
+      "sourceId": "2ce2540f-f0f3-597b-a5b4-2cae41f638a3",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#607D8B",
+          "sizeType": "fixed",
+          "fixedSize": 8,
+          "opacity": 0.85,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1
+        },
+        "lineOptions": {
+          "strokeColor": "#607D8B",
+          "strokeWidth": 2,
+          "strokeOpacity": 0.8
+        },
+        "polygonOptions": {
+          "fillColor": "#808080",
+          "fillOpacity": 0.59,
+          "enableSeriesGroup": true
+        },
+        "tooltipKeys": [
+          "mode",
+          "interpretation",
+          "observed_at",
+          "acquired_utc",
+          "window_end_utc",
+          "name",
+          "commune",
+          "nom",
+          "frp_mw",
+          "satellite",
+          "estimated_distance_km"
+        ],
+        "polygonExtrusionOptions": {
+          "enableSeriesGroup": true,
+          "fillColor": "#808080",
+          "height": [
+            "interpolate",
+            [
+              "linear"
+            ],
+            [
+              "zoom"
+            ],
+            5,
+            [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "get",
+                "population"
+              ],
+              19,
+              10000,
+              5556,
+              100000
+            ],
+            10,
+            [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "get",
+                "population"
+              ],
+              19,
+              100,
+              5556,
+              1000
+            ],
+            15,
+            [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "get",
+                "population"
+              ],
+              19,
+              10,
+              5556,
+              100
+            ],
+            20,
+            [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "get",
+                "population"
+              ],
+              19,
+              1,
+              5556,
+              10
+            ]
+          ],
+          "heightProperty": "population",
+          "accurateHeight": false,
+          "fillOpacity": 0.59
+        },
+        "allowExtrusions": true,
+        "dataLabelOptions": {
+          "enabled": true,
+          "placement": "point"
+        },
+        "dataLabelKeys": [
+          "population",
+          "codeRegion",
+          "nom",
+          "code"
+        ]
+      }
+    },
+    {
+      "id": "6d7e0d25-48d5-5815-8d92-8f52900fc8cf",
+      "name": "Data freshness and limits | DEMO - click",
+      "sourceId": "c8417d1a-bd68-520a-9c58-ece7b6c3b65e",
+      "options": {
+        "type": "vector",
+        "visible": false,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#172B4D",
+          "sizeType": "fixed",
+          "fixedSize": 12,
+          "opacity": 0.85,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1
+        },
+        "lineOptions": {
+          "strokeColor": "#172B4D",
+          "strokeWidth": 2,
+          "strokeOpacity": 0.8
+        },
+        "polygonOptions": {
+          "fillColor": "#172B4D",
+          "fillOpacity": 0.1
+        },
+        "tooltipKeys": [
+          "label",
+          "checked_utc",
+          "latest_thermal_acquired_utc",
+          "thermal_age_hours",
+          "latest_aircraft_received_utc",
+          "aircraft_age_hours",
+          "latest_weather_observed_utc",
+          "weather_age_hours",
+          "real_thermal_observations_24h",
+          "airborne_positions_30m",
+          "weather_grids_2h",
+          "interpretation"
+        ],
+        "dataLabelOptions": {
+          "enabled": true,
+          "color": "#172B4D",
+          "size": 12,
+          "textStrokeColor": "#FFFFFF",
+          "textStrokeWidth": 2
+        },
+        "dataLabelKeys": [
+          "label"
+        ]
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    },
+    {
+      "id": "b6e94c07-2d51-4a83-91cf-58e0d7a13629",
+      "name": "Fire stations | within 25 km of a detection",
+      "sourceId": "8a3f6d21-4c07-4b19-9e52-71ad30cf5b84",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#2563EB",
+          "sizeType": "fixed",
+          "fixedSize": 10,
+          "opacity": 0.9,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1.5
+        },
+        "color": "#2563EB",
+        "tooltipKeys": [
+          "name",
+          "station_type",
+          "operator",
+          "distance_km",
+          "nearest_fire_peak_mw",
+          "nearest_fire_last_seen",
+          "interpretation"
+        ]
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    },
+    {
+      "id": "c04a8271-6e35-4d92-b7a1-9f38c25be706",
+      "name": "Scoopable water | within 40 km of a detection",
+      "sourceId": "3d7b1e58-9a24-4f60-8c73-2b6194ea50df",
+      "options": {
+        "type": "vector",
+        "visible": true,
+        "enablePopups": true,
+        "pointLayerType": "bubble",
+        "bubbleOptions": {
+          "color": "#0621d1",
+          "sizeType": "fixed",
+          "fixedSize": 10,
+          "opacity": 0.9,
+          "strokeColor": "#FFFFFF",
+          "strokeWidth": 1.5
+        },
+        "color": "#0621d1",
+        "tooltipKeys": [
+          "name",
+          "water_type",
+          "distance_km",
+          "nearest_fire_peak_mw",
+          "nearest_fire_last_seen",
+          "interpretation"
+        ]
+      },
+      "latitudeColumnName": "latitude",
+      "longitudeColumnName": "longitude"
+    }
+  ]
+}

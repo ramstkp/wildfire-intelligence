@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventhouse",
+    "displayName": "EH_Wildfire"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "598d5432-1284-bbfd-4cb8-02cbcd4919ca"
+  }
+}

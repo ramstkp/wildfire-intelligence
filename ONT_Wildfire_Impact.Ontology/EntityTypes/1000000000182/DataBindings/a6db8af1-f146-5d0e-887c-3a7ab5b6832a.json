@@ -1,0 +1,52 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "a6db8af1-f146-5d0e-887c-3a7ab5b6832a",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000189"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000196"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000203"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000210"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000217"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000224"
+      },
+      {
+        "sourceColumnName": "Population",
+        "targetPropertyId": "1000000000231"
+      },
+      {
+        "sourceColumnName": "Department",
+        "targetPropertyId": "1000000000238"
+      },
+      {
+        "sourceColumnName": "Interpretation",
+        "targetPropertyId": "1000000000245"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_commune",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

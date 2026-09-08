@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/ontology/dataBinding/1.0.0/schema.json",
+  "id": "d23493d2-f9f9-5a55-bad7-ecfd4aca68ab",
+  "dataBindingConfiguration": {
+    "dataBindingType": "NonTimeSeries",
+    "propertyBindings": [
+      {
+        "sourceColumnName": "Id",
+        "targetPropertyId": "1000000000112"
+      },
+      {
+        "sourceColumnName": "Name",
+        "targetPropertyId": "1000000000119"
+      },
+      {
+        "sourceColumnName": "Latitude",
+        "targetPropertyId": "1000000000126"
+      },
+      {
+        "sourceColumnName": "Longitude",
+        "targetPropertyId": "1000000000133"
+      },
+      {
+        "sourceColumnName": "SnapshotTime",
+        "targetPropertyId": "1000000000140"
+      },
+      {
+        "sourceColumnName": "Mode",
+        "targetPropertyId": "1000000000147"
+      },
+      {
+        "sourceColumnName": "ObservedAt",
+        "targetPropertyId": "1000000000154"
+      },
+      {
+        "sourceColumnName": "Satellite",
+        "targetPropertyId": "1000000000161"
+      },
+      {
+        "sourceColumnName": "SensorTier",
+        "targetPropertyId": "1000000000168"
+      },
+      {
+        "sourceColumnName": "FrpMW",
+        "targetPropertyId": "1000000000175"
+      }
+    ],
+    "sourceTableProperties": {
+      "sourceType": "LakehouseTable",
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "itemId": "1858e36f-f9af-8adf-4343-d2d85ce1dc25",
+      "sourceTableName": "node_detection",
+      "sourceSchema": "graph_wildfires"
+    }
+  }
+}

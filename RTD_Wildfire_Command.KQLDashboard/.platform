@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "KQLDashboard",
+    "displayName": "RTD_Wildfire_Command",
+    "description": "Wildfire command centre: live situation, early warning, fire weather, response"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4c02abd9-9279-a801-493e-a9b6354b3e6f"
+  }
+}

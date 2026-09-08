@@ -1,0 +1,178 @@
+{
+  "sources": [
+    {
+      "id": "4f2bb74e-3359-494a-959c-3000a0ba413d",
+      "name": "wildfire_ingest",
+      "type": "CustomEndpoint",
+      "properties": {}
+    }
+  ],
+  "destinations": [
+    {
+      "id": "7d03525a-5fda-4764-b50c-cc62401c8ff4",
+      "name": "dst_fire",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "ProcessedIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "databaseName": "EH_Wildfire",
+        "tableName": "bronze_fire_raw",
+        "inputSerialization": {
+          "type": "Json",
+          "properties": {
+            "encoding": "UTF8"
+          }
+        }
+      },
+      "inputNodes": [
+        {
+          "name": "filter_fire"
+        }
+      ]
+    },
+    {
+      "id": "8407a395-498c-49cf-8612-60090fb0ea3f",
+      "name": "dst_weather",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "ProcessedIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "databaseName": "EH_Wildfire",
+        "tableName": "bronze_weather_raw",
+        "inputSerialization": {
+          "type": "Json",
+          "properties": {
+            "encoding": "UTF8"
+          }
+        }
+      },
+      "inputNodes": [
+        {
+          "name": "filter_weather"
+        }
+      ]
+    },
+    {
+      "id": "8c45b69d-47d6-43f5-9d49-9f16aca8708a",
+      "name": "dst_aircraft",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "ProcessedIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "0ca41a65-9de9-8ca5-4fe3-e82dc2cc1354",
+        "databaseName": "EH_Wildfire",
+        "tableName": "bronze_aircraft_raw",
+        "inputSerialization": {
+          "type": "Json",
+          "properties": {
+            "encoding": "UTF8"
+          }
+        }
+      },
+      "inputNodes": [
+        {
+          "name": "filter_aircraft"
+        }
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "82526b50-f0cc-418f-a254-e192667586da",
+      "name": "wildfire_stream",
+      "type": "DefaultStream",
+      "properties": {},
+      "inputNodes": [
+        {
+          "name": "wildfire_ingest"
+        }
+      ]
+    }
+  ],
+  "operators": [
+    {
+      "name": "filter_aircraft",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "wildfire_stream"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "event_type",
+              "columnPathSegments": null
+            },
+            "operatorType": "Equals",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "Nvarchar(max)",
+              "value": "aircraft"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "filter_fire",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "wildfire_stream"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "event_type",
+              "columnPathSegments": null
+            },
+            "operatorType": "Equals",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "Nvarchar(max)",
+              "value": "fire"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "filter_weather",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "wildfire_stream"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "event_type",
+              "columnPathSegments": null
+            },
+            "operatorType": "Equals",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "Nvarchar(max)",
+              "value": "weather"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compatibilityLevel": "1.1"
+}

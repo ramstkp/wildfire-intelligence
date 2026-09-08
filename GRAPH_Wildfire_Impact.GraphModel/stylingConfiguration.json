@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/graphIndex/definition/stylingConfiguration/1.0.0/schema.json",
+  "modelLayout": {
+    "positions": {
+      "FireZoneNode": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "DetectionNode": {
+        "x": 300.0,
+        "y": 0.0
+      },
+      "CommuneNode": {
+        "x": 600.0,
+        "y": 0.0
+      },
+      "CriticalInfrastructureNode": {
+        "x": 900.0,
+        "y": 0.0
+      },
+      "FireStationNode": {
+        "x": 0.0,
+        "y": 320.0
+      },
+      "WaterBodyNode": {
+        "x": 300.0,
+        "y": 320.0
+      },
+      "WeatherNode": {
+        "x": 600.0,
+        "y": 320.0
+      },
+      "AircraftNode": {
+        "x": 900.0,
+        "y": 320.0
+      }
+    },
+    "styles": {},
+    "pan": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "zoomLevel": 0.75
+  },
+  "visualFormat": {
+    "FireZoneNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#EF4444",
+      "shape": null
+    },
+    "DetectionNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#F59E0B",
+      "shape": null
+    },
+    "CommuneNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#8B5CF6",
+      "shape": null
+    },
+    "CriticalInfrastructureNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#EC4899",
+      "shape": null
+    },
+    "FireStationNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#10B981",
+      "shape": null
+    },
+    "WaterBodyNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#06B6D4",
+      "shape": null
+    },
+    "WeatherNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#3B82F6",
+      "shape": null
+    },
+    "AircraftNode": {
+      "defaultDisplayProperty": "Name",
+      "color": "#14B8A6",
+      "shape": null
+    }
+  }
+}
