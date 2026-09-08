@@ -177,6 +177,19 @@ The notebook is **idempotent** and defaults to `DRY_RUN = True`. Review the
 output, set `DRY_RUN = False`, run again. It writes a JSON backup of every
 definition it touches to `LH_WildFires/Files/rebind_backups/` first.
 
+It calls the Fabric API through `sempy.fabric.FabricRestClient`. That matters:
+the raw `notebookutils.credentials.getToken` path returns intermittent
+`HTTP 500 INTERNAL_ERROR (Retriable:true)` on this platform, and it failed
+repeatedly during testing even with retries and backoff. The client is the
+supported transport and manages its own auth; `getToken` is kept only as a
+fallback.
+
+> If the notebook editor shows an "another user has saved changes" banner, it is
+> holding a stale copy and **Run all will execute the old code**. Reload the tab,
+> or run it as a job instead:
+> `POST /v1/workspaces/{workspace}/items/{notebook}/jobs/instances?jobType=RunNotebook`,
+> which always uses the stored definition.
+
 Its final cell lists the bindings Fabric manages through its own UI —
 Eventstream, shortcuts, dashboard, ontology, Activator. Those normally resolve
 on sync; the list is there so you know where to look if something comes up
@@ -223,6 +236,8 @@ You are done when all of these are true:
 | FIRMS returns an empty body | Quota exhausted (~5,000 per 10 min) | Wait for the window to reset |
 | Overpass returns 429 or 403 | `CONTACT_EMAIL` is still the placeholder | Set a real alias in `00_config` |
 | `CapacityNotActive` | Capacity paused | Resume it in the Azure portal |
+| `getToken` returns HTTP 500 `INTERNAL_ERROR` | Known flakiness in the Spark token library | Use `sempy.fabric.FabricRestClient` rather than `notebookutils.credentials.getToken`, as `99_rebind_workspace` does |
+| Notebook runs old code after an edit | The editor is holding a stale copy | Reload the tab, or run it as a job through the REST API |
 | `LookupError: <type> named '…' not found` | An item was renamed | Names are the contract — restore the original name, or update the constants at the top of `00_config` |
 | Graph model returns nothing | Not yet rebound, or `07` has not run | Run `07_graph_wildfire_snapshot`, then `99_rebind_workspace` |
 | `GraphDataSourcePathInvalid` | A graph path was hand-edited to a name-based form | Fabric requires GUIDs here. Run `99_rebind_workspace` |

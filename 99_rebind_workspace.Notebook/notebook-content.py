@@ -96,77 +96,109 @@ from datetime import datetime, timezone
 import notebookutils
 import requests
 
-FABRIC_API = "https://api.fabric.microsoft.com/v1"
+FABRIC_HOST = "https://api.fabric.microsoft.com"
 _TOKEN = None
 
+# Preferred transport. sempy's FabricRestClient is the supported way to call the
+# Fabric REST API from a notebook and manages its own auth. The raw
+# notebookutils.credentials.getToken path returns intermittent HTTP 500s
+# (INTERNAL_ERROR, Retriable:true) on this platform, so it is only a fallback.
+try:
+    import sempy.fabric as _sempy
+    _client = _sempy.FabricRestClient()
+    print("transport  sempy.fabric.FabricRestClient")
+except Exception as _exc:                                  # noqa: BLE001
+    _client = None
+    print(f"transport  raw REST (sempy unavailable: {_exc})")
 
-def _get_token(retries=5):
-    """Acquire a Fabric token once and reuse it.
 
-    notebookutils.credentials.getToken intermittently returns HTTP 500
-    (INTERNAL_ERROR, Retriable:true), so this backs off and retries rather than
-    failing the run. Calling it per-request is both slow and fragile.
-    """
+def _get_token(retries=8):
+    """Fallback token acquisition: cached, retried, and self-reporting."""
     global _TOKEN
     if _TOKEN:
         return _TOKEN
+
+    sources = []
+    if "_token" in globals():
+        sources.append(("00_config._token", globals()["_token"]))
+    sources.append(("notebookutils",
+                    lambda: notebookutils.credentials.getToken(FABRIC_HOST)))
+
     last = None
-    for attempt in range(retries):
-        try:
-            _TOKEN = notebookutils.credentials.getToken(
-                "https://api.fabric.microsoft.com")
-            return _TOKEN
-        except Exception as exc:          # noqa: BLE001 - surface after retries
-            last = exc
-            wait = 2 ** attempt
-            print(f"  token attempt {attempt + 1}/{retries} failed, retrying in {wait}s")
-            time.sleep(wait)
-    raise RuntimeError(f"could not acquire a Fabric token after {retries} attempts: {last}")
+    for attempt in range(1, retries + 1):
+        for label, fn in sources:
+            try:
+                value = fn()
+                if value:
+                    _TOKEN = value
+                    return _TOKEN
+            except Exception as exc:                       # noqa: BLE001
+                last = exc
+                print(f"  token attempt {attempt}/{retries} via {label}: "
+                      f"{str(exc).strip().splitlines()[0][:120]}")
+        if attempt < retries:
+            time.sleep(min(2 ** attempt, 30))
+
+    raise RuntimeError(f"could not acquire a Fabric token: {last}")
 
 
 def _hdr():
-    return {
-        "Authorization": f"Bearer {_get_token()}",
-        "Content-Type": "application/json",
-    }
+    return {"Authorization": f"Bearer {_get_token()}",
+            "Content-Type": "application/json"}
 
 
-def _lro(method, url, body=None, timeout_s=180):
+def _request(method, path, body=None):
+    """Call the Fabric API. `path` is relative, e.g. '/v1/workspaces/...'."""
+    if _client is not None:
+        fn = getattr(_client, method.lower())
+        return fn(path, json=body) if body is not None else fn(path)
+    return requests.request(method, FABRIC_HOST + path,
+                            headers=_hdr(), json=body, timeout=120)
+
+
+def _as_path(url):
+    """Turn an absolute operation URL into a path both transports accept."""
+    marker = "api.fabric.microsoft.com"
+    return url.split(marker, 1)[1] if marker in url else url
+
+
+def _lro(method, path, body=None, timeout_s=180):
     """Call an endpoint that may return 202 + Location, and wait for the result."""
-    r = requests.request(method, url, headers=_hdr(), json=body, timeout=120)
+    r = _request(method, path, body)
 
     if r.status_code in (200, 201):
         return r.json() if r.text else {}
     if r.status_code != 202:
-        r.raise_for_status()
+        raise RuntimeError(f"{method} {path} -> {r.status_code}: {r.text[:500]}")
 
     location = r.headers.get("Location") or r.headers.get("location")
     if not location:
-        raise RuntimeError(f"202 with no Location header from {url}")
+        raise RuntimeError(f"202 with no Location header from {path}")
+    op = _as_path(location)
 
     deadline = time.time() + timeout_s
     while time.time() < deadline:
         time.sleep(2)
-        poll = requests.get(location, headers=_hdr(), timeout=60)
+        poll = _request("GET", op)
         state = poll.json() if poll.text else {}
         status = state.get("status")
         if status == "Succeeded":
-            result = requests.get(location.rstrip("/") + "/result",
-                                  headers=_hdr(), timeout=120)
+            result = _request("GET", op.rstrip("/") + "/result")
             return result.json() if result.text else {}
         if status == "Failed":
-            raise RuntimeError(f"operation failed: {json.dumps(state.get('error', state))}")
+            raise RuntimeError(
+                f"operation failed: {json.dumps(state.get('error', state))[:500]}")
     raise TimeoutError(f"operation did not finish within {timeout_s}s")
 
 
 def get_definition(item_id):
-    return _lro("POST", f"{FABRIC_API}/workspaces/{WS}/items/{item_id}/getDefinition")
+    return _lro("POST", f"/v1/workspaces/{WS}/items/{item_id}/getDefinition")
 
 
 def update_definition(item_id, parts):
     return _lro(
         "POST",
-        f"{FABRIC_API}/workspaces/{WS}/items/{item_id}/updateDefinition?updateMetadata=false",
+        f"/v1/workspaces/{WS}/items/{item_id}/updateDefinition?updateMetadata=false",
         {"definition": {"parts": parts}},
     )
 
@@ -200,8 +232,11 @@ print(f"lakehouse {LH_NAME} {LH_ID}")
 print(f"eventhouse {KQL_DB} {KQL_URI}")
 print(f"mode      {'DRY RUN - nothing will be written' if DRY_RUN else 'APPLY'}")
 
-_get_token()
-print("token     acquired")
+# Fail fast and loudly here rather than midway through a rebind.
+_probe = _request("GET", f"/v1/workspaces/{WS}")
+print(f"api probe {_probe.status_code}")
+if _probe.status_code != 200:
+    raise RuntimeError(f"cannot reach the Fabric API: {_probe.status_code} {_probe.text[:300]}")
 
 
 # METADATA ********************
