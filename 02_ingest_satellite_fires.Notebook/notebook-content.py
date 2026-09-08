@@ -81,6 +81,7 @@
 # been published. That is expected: the notebook filters against the Eventhouse
 # and sends only what is new.
 
+
 # MARKDOWN ********************
 
 # # 02 - Satellite Fire Detections
@@ -107,6 +108,13 @@
 
 %run 00_config
 
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # CELL ********************
 
 # Fail fast rather than calling FIRMS with an empty key.
@@ -116,6 +124,13 @@ if not FIRMS_KEY:
         "The key is free from "
         "https://firms.modaps.eosdis.nasa.gov/api/area/")
 
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # CELL ********************
 
@@ -143,6 +158,13 @@ TIERS = [
     ("VIIRS_NOAA21_NRT",  2, "polar",         "375 m, NOAA-21"),
     ("MODIS_NRT",         1, "polar",         "1 km, Aqua + Terra"),
 ]
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # CELL ********************
 
@@ -216,6 +238,13 @@ def publish(events, label, event_type, batch_size=200):
     print(f"{label}: published {sent}/{len(events)}")
     return sent
 
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Fetch all sensor tiers
@@ -258,6 +287,13 @@ for product, days, sensor_class, note in TIERS:
 fires = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 print(f"\nTOTAL raw detections: {len(fires)}")
 
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Geostationary cadence check
@@ -277,6 +313,13 @@ if len(geo):
     print(per_sat.to_string())
 else:
     print("No geostationary rows this run.")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # MARKDOWN ********************
 
@@ -320,6 +363,13 @@ print(f"events ready: {len(events)}")
 print(f"  geostationary: {sum(1 for e in events if e['sensor_class']=='geostationary')}")
 print(f"  polar        : {sum(1 for e in events if e['sensor_class']=='polar')}")
 print(f"  max FRP      : {max(e['frp'] for e in events):.1f} MW")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # MARKDOWN ********************
 
@@ -389,6 +439,13 @@ print(f"FIRMS returned : {len(events)}")
 print(f"already seen   : {dupes}  ({pct:.0f}% of the window)")
 print(f"new to publish : {len(fresh)}")
 
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Publish to Eventstream
@@ -400,6 +457,13 @@ print(f"new to publish : {len(fresh)}")
 # into bronze_fire_raw, where the update policy parses it into
 # silver_fire_detections and gold_fire_dedup guarantees one row per detection.
 publish(fresh, "new fire detections", "fire")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # MARKDOWN ********************
 
@@ -426,3 +490,10 @@ df = (spark.read
       .option("accessToken", tok)
       .load())
 df.show(truncate=False)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
