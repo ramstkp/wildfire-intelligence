@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "99_rebind_workspace",
+    "description": "Post-deployment rebind. Repoints item definitions that Fabric stores as absolute GUIDs at the workspace this notebook is running in."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "9cfe1c32-ec5e-452e-bd9a-3e72c607f4fb"
+  }
+}

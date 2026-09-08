@@ -23,6 +23,7 @@ and the folder name *is* the item name.
 | `04_ingest_aircraft` | Notebook | OpenSky ADS-B positions → Eventstream. |
 | `06_ont_wildfires_curation` | Notebook | Curates `rt_fires` → `ont_wildfires` entity and bridge tables. |
 | `07_graph_wildfire_snapshot` | Notebook | Builds the `graph_wildfires` node and edge snapshot. |
+| `99_rebind_workspace` | Notebook | Post-deployment rebind. Repoints the two items Fabric stores as absolute GUIDs at whichever workspace it runs in. |
 | `ES_Wildfire` | Eventstream | One custom endpoint, three `event_type` filters, three Eventhouse destinations. |
 | `EH_Wildfire` | Eventhouse | 12 tables, 23 KQL functions, 4 materialized views — bronze / silver / gold. |
 | `LH_WildFires` | Lakehouse | 12 OneLake shortcuts onto the Eventhouse, plus curated and graph schemas. |
@@ -38,12 +39,16 @@ and the folder name *is* the item name.
 
 ## Deploying into your own Fabric environment
 
-> **Read this first.** Fabric's Git export writes *some* references as the
-> placeholder `00000000-0000-0000-0000-000000000000`, which Fabric rewrites to
-> the current workspace on sync. It writes **others as literal item GUIDs from
-> the workspace this was exported from**, and those resolve nowhere else.
-> Syncing this repo gives you every item, correctly defined, but several of them
-> land **unbound**. Step 6 fixes that, and it is not optional.
+> **How portable is this?** Most of it is. Fabric's Git export writes workspace
+> references as the placeholder `00000000-0000-0000-0000-000000000000`, which the
+> service rewrites to the current workspace on sync, and it maps item ids through
+> the stable `logicalId` in each `.platform` file. Item ids that *look* foreign in
+> the JSON — `0ca41a65-…`, `1858e36f-…` — are this workspace's own ids written
+> with the GUID field groups reversed, not stale references.
+>
+> **Two items are genuinely not portable**, because Fabric stores them as absolute
+> GUIDs with no placeholder form: the graph model's OneLake paths and the KQL
+> queryset's cluster URI. Step 6 fixes both by running `99_rebind_workspace`.
 
 ### Prerequisites
 
@@ -120,28 +125,7 @@ Run **`01_reference_data`** once, end to end. It populates `ref_communes`,
 
 Nothing downstream works without this — the dispatch functions join against it.
 
-### 6. Rebind the items that point at the old workspace
-
-Each of these still references item GUIDs from the workspace this repo was
-exported from. Open each and repoint it. **Item names are unchanged, so in every
-case you are selecting the same name inside your own workspace.**
-
-| # | Item | What to fix |
-|---|---|---|
-| 1 | `LH_WildFires` | 12 OneLake shortcuts under `Tables/rt_fires` point at the old KQL database. Delete and recreate them against **your** `EH_Wildfire`, keeping the same 12 names. |
-| 2 | `ES_Wildfire` | Destinations `dst_fire`, `dst_weather`, `dst_aircraft` point at the old Eventhouse. Edit each, reselect `EH_Wildfire`, keep target tables `bronze_fire_raw` / `bronze_weather_raw` / `bronze_aircraft_raw` and **Processed ingestion**. |
-| 3 | `RTD_Wildfire_Command` | The `EH_Wildfire` data source carries a stale `databaseArtifactId`. **Manage → Data sources** → reselect your KQL database. |
-| 4 | `Wildfire Atlas - Live` | Layer sources reference the old KQL database and Lakehouse. Reselect both in layer settings. |
-| 5 | `QS_Wildfire_Mirroring` | Hard-codes the old cluster URI. Reconnect it to your Eventhouse. |
-| 6 | `ACT_Wildfire` | Rules point at the old Eventhouse. Each rule → **Manage source** → repoint. Leave the rules **disabled** until step 9. |
-| 7 | `GRAPH_Wildfire_Impact` | **The awkward one.** `dataSources.json` stores fully-qualified `abfss://` paths containing the source workspace and Lakehouse GUIDs — no placeholder at all. Repoint all 15 node and edge sources at `LH_WildFires/Tables/graph_wildfires/…`. Do this *after* step 8. |
-| 8 | `ONT_Wildfire_Impact` | 8 entity data bindings reference the old Lakehouse. Reselect `LH_WildFires` on each. Do this *after* step 8. |
-| 9 | `AGENT_Wildfire`, `wildfire_tracking_agent` | Data sources reference the old ontology and Lakehouse. Reselect, then **Publish** each agent. |
-
-Items 7, 8 and 9 need the curated tables to exist, so finish step 8 and come
-back to them.
-
-### 7. Start ingestion
+### 6. Start ingestion
 
 Open **`ES_Wildfire`** → **Activate all** → **Now**.
 
@@ -163,7 +147,7 @@ rows.
 > anywhere. If the dashboard is empty, check the destinations before you check
 > anything else.
 
-### 8. Build the curated and graph layers
+### 7. Build the curated and graph layers
 
 Run, in order:
 
@@ -172,7 +156,32 @@ Run, in order:
 07_graph_wildfire_snapshot    → LH_WildFires/Tables/graph_wildfires
 ```
 
-Now go back and complete rebinding items 7, 8 and 9 in step 6.
+The graph model can only bind once these tables exist, which is why the rebind in step 8 comes next.
+
+### 8. Rebind the two non-portable items
+
+Open **`99_rebind_workspace`** and run it. It resolves this workspace, Lakehouse
+and Eventhouse **by name**, then rewrites:
+
+| Item | What it stores | What the notebook does |
+|---|---|---|
+| `GRAPH_Wildfire_Impact` | 16 fully-qualified `abfss://<workspace-guid>@onelake…/<lakehouse-guid>/Tables/…` paths | Rewrites the workspace and Lakehouse segments, preserving the table path |
+| `QS_Wildfire_Mirroring` | The Eventhouse cluster URI as a literal | Substitutes this workspace's query endpoint |
+
+There is no declarative alternative. The graph model rejects a name-based path
+and the zero-GUID placeholder alike, with
+`GraphDataSourcePathInvalid: Workspace id segment is not a valid GUID` — the
+reference has to be resolved at run time and written back.
+
+The notebook is **idempotent** and defaults to `DRY_RUN = True`. Review the
+output, set `DRY_RUN = False`, run again. It writes a JSON backup of every
+definition it touches to `LH_WildFires/Files/rebind_backups/` first.
+
+Its final cell lists the bindings Fabric manages through its own UI —
+Eventstream, shortcuts, dashboard, ontology, Activator. Those normally resolve
+on sync; the list is there so you know where to look if something comes up
+empty.
+
 
 ### 9. Enable schedules and rules
 
@@ -215,8 +224,9 @@ You are done when all of these are true:
 | Overpass returns 429 or 403 | `CONTACT_EMAIL` is still the placeholder | Set a real alias in `00_config` |
 | `CapacityNotActive` | Capacity paused | Resume it in the Azure portal |
 | `LookupError: <type> named '…' not found` | An item was renamed | Names are the contract — restore the original name, or update the constants at the top of `00_config` |
-| Graph model returns nothing | Still bound to the old workspace, or `07` has not run | Rebind `dataSources.json`, then run `07_graph_wildfire_snapshot` |
-| Ontology entities empty | Bindings point at the old Lakehouse | Rebind each entity to `LH_WildFires` |
+| Graph model returns nothing | Not yet rebound, or `07` has not run | Run `07_graph_wildfire_snapshot`, then `99_rebind_workspace` |
+| `GraphDataSourcePathInvalid` | A graph path was hand-edited to a name-based form | Fabric requires GUIDs here. Run `99_rebind_workspace` |
+| Ontology entities empty | Bindings did not resolve on sync | Reselect `LH_WildFires` on each entity binding |
 
 ---
 
